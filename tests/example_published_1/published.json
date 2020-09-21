@@ -1,5 +1,26 @@
 {
     "collections": {
+        "default": {
+            "schema": {
+                "required_artifacts": [],
+                "optional_artifacts": null,
+                "metadata_schema": null,
+                "allow_unspecified_artifacts": true
+            },
+            "publications": {
+                "textbook": {
+                    "metadata": {
+                        "name": "Textbook",
+                        "author": "Justin Eldridge"
+                    },
+                    "artifacts": {
+                        "textbook.pdf": {
+                            "path": "default/textbook/textbook.pdf"
+                        }
+                    }
+                }
+            }
+        },
         "homeworks": {
             "schema": {
                 "required_artifacts": [
@@ -23,6 +44,21 @@
                 "allow_unspecified_artifacts": false
             },
             "publications": {
+                "02-python": {
+                    "metadata": {
+                        "name": "Homework 02",
+                        "due": "2020-09-10 23:59:00",
+                        "released": "2020-11-01"
+                    },
+                    "artifacts": {
+                        "homework.pdf": {
+                            "path": "homeworks/02-python/homework.pdf"
+                        },
+                        "solution.pdf": {
+                            "path": "homeworks/02-python/solution.pdf"
+                        }
+                    }
+                },
                 "01-intro": {
                     "metadata": {
                         "name": "Homework 01",
@@ -30,20 +66,11 @@
                         "released": "2020-09-01"
                     },
                     "artifacts": {
+                        "homework.pdf": {
+                            "path": "homeworks/01-intro/homework.pdf"
+                        },
                         "solution.pdf": {
                             "path": "homeworks/01-intro/solution.pdf"
-                        }
-                    }
-                },
-                "02-python": {
-                    "metadata": {
-                        "name": "Homework 02",
-                        "due": "2020-09-10 23:59:00",
-                        "released": "2020-09-01"
-                    },
-                    "artifacts": {
-                        "solution.pdf": {
-                            "path": "homeworks/02-python/solution.pdf"
                         }
                     }
                 }
