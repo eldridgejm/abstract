@@ -1,3 +1,4 @@
-# syllabus
+Syllabus
+========
 
-This is the syllabus. And I don't feel any different.
+This is the syllabus.

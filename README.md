@@ -1,7 +1,7 @@
 broadcast
 =========
 
-Never manually upload homeworks or lecture slides to your course page again.
+Never manually upload homeworks or lecture slides again.
 
 *broadcast* is a static site generator designed specifically for making course webpages.
 It integrates with [*publish*](https://github.com/eldridgejm/publish), so it is aware of

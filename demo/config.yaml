@@ -11,6 +11,17 @@ urgent_announcement:
 
 
 schedule:
+    # whether the first week should be considered week zero (true) or one (false)
+    week_zero: true
+
+    # the date of the first monday in the quarter
+    first_monday: 2020-9-28
+
+    exam_dates:
+        Midterm 01: {{ course.midterm_01_date }}
+        Midterm 02: {{ course.midterm_02_date }}
+        Final Exam: {{ course.final_exam_date }}
+
     # dictionary mapping each week to an announcment
     weekly-announcements:
         1: This is a test! Warning! Hello!
@@ -145,7 +156,24 @@ listings:
             content: metadata.due
 
 listings:
-    page: listings
+    - page: listings.html
+      description: |
+          This page contains all of the course materials, organized into tables.
+      tables:
+          - name: Homework
+            columns:
+              - title: Homework
+                sort: ascending
+                content: metadata.name
+                url: artifacts.homework.path
+
+              - title: Solution
+                content: metadata.name
+                url: artifacts.solution.path
+
+              - title: Due
+                content: metadata.due
+
 
 navbar: !include navbar.yaml
 listings: !include listings.yaml

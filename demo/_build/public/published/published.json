@@ -1,0 +1,53 @@
+{
+    "collections": {
+        "homeworks": {
+            "schema": {
+                "required_artifacts": [
+                    "homework.pdf",
+                    "solution.pdf"
+                ],
+                "optional_artifacts": [
+                    "template.zip"
+                ],
+                "metadata_schema": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "due": {
+                        "type": "date"
+                    },
+                    "released": {
+                        "type": "date"
+                    }
+                },
+                "allow_unspecified_artifacts": false
+            },
+            "publications": {
+                "01-intro": {
+                    "metadata": {
+                        "name": "Homework 01",
+                        "due": "2020-09-10 23:59:00",
+                        "released": "2020-09-01"
+                    },
+                    "artifacts": {
+                        "solution.pdf": {
+                            "path": "homeworks/01-intro/solution.pdf"
+                        }
+                    }
+                },
+                "02-python": {
+                    "metadata": {
+                        "name": "Homework 02",
+                        "due": "2020-09-10 23:59:00",
+                        "released": "2020-09-01"
+                    },
+                    "artifacts": {
+                        "solution.pdf": {
+                            "path": "homeworks/02-python/solution.pdf"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
