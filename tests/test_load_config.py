@@ -44,13 +44,13 @@ def test_load_config(write_file):
         """
     )
 
-    path = write_file('config.yaml', config_yaml)
-    write_file('foo.yaml', foo_yaml)
-    write_file('bar.yaml', bar_yaml)
+    path = write_file("config.yaml", config_yaml)
+    write_file("foo.yaml", foo_yaml)
+    write_file("bar.yaml", bar_yaml)
 
     # when
     config = broadcast.load_config(path)
 
     # then
-    assert config['foo']['x'] == 1
-    assert config['testing']['bar'] == [1, 2, 3]
+    assert config["foo"]["x"] == 1
+    assert config["testing"]["bar"] == [1, 2, 3]

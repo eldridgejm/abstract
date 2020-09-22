@@ -1,6 +1,4 @@
 import cerberus
-import markdown
-from textwrap import dedent
 
 
 SCHEMA = {
@@ -12,7 +10,7 @@ SCHEMA = {
                 "text": {"type": "string"},
                 "subtext": {"type": "string"},
                 "url": {"type": "string"},
-                "icon": {"type": "string"}
+                "icon": {"type": "string"},
             },
         },
     }
@@ -28,4 +26,4 @@ def button_bar(templates, published, config):
         raise RuntimeError(f"Invalid config: {validator.errors}")
 
     template = templates.get_template("button_bar.html")
-    return template.render(config=config['*'])
+    return template.render(config=config["*"])

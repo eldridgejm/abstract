@@ -21,6 +21,6 @@ in
     propagatedBuildInputs = with python37Packages; [ jinja2 pyyaml markdown publish ];
 
     # needed for development
-    nativeBuildInputs = with python37Packages; [ pytest black ipython sphinx sphinx_rtd_theme ];
+    nativeBuildInputs = with python37Packages; [ pytest black flake8 ipython sphinx sphinx_rtd_theme ];
 
   }

@@ -16,7 +16,7 @@ class Demo:
 
         shutil.copytree(pathlib.Path(__file__).parent / "theme", path / "theme")
 
-        content = self.add_to_config(
+        self.add_to_config(
             """
             theme:
                 page_title: "example theme"
