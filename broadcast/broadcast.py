@@ -216,6 +216,17 @@ def _all_pages(input_path, output_path):
         yield contents, new_path
 
 
+def _validate_theme_schema(input_path, config):
+    """Validate a config against the theme's schema."""
+    with (input_path / "theme" / "schema.yaml").open() as fileobj:
+        theme_schema = yaml.load(fileobj, Loader=yaml.Loader)
+
+    validator = cerberus.Validator(theme_schema, allow_unknown=True, require_all=True)
+    result = validator.validate(config)
+    if not result:
+        raise RuntimeError(f"Invalid theme config: {validator.errors}")
+
+
 def broadcast(input_path, output_path, published_path=None):
     input_path = pathlib.Path(input_path)
     output_path = pathlib.Path(output_path)
@@ -240,17 +251,11 @@ def broadcast(input_path, output_path, published_path=None):
     )
 
     # validate the config against the theme's schema
-    with (input_path / "theme" / "schema.yaml").open() as fileobj:
-        theme_schema = yaml.load(fileobj, Loader=yaml.Loader)
-
-    validator = cerberus.Validator(theme_schema, allow_unknown=True, require_all=True)
-    result = validator.validate(config)
-    if not result:
-        raise RuntimeError(f"Invalid theme config: {validator.errors}")
+    _validate_theme_schema(input_path, config)
 
     # the context used during interpolation
     context = {
-        "elements": Elements(templates=theme_templates, published=published),
+        "elements": _Elements(templates=theme_templates, published=published),
         "config": config,
     }
 
