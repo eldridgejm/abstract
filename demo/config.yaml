@@ -1,65 +1,28 @@
 theme:
-    page_title: "DSC 40 &mdash; Fall 2020"
+    page_title: "{{ course.name }} &mdash; {{ course.quarter }}"
 
+quote_of_the_day: 
+    quote: "The simple is the seal of the true."
+    author: Albert Einsteins
 
+# the announcement box on the front page
 announcement:
-    # title is optional; make it Null to display no title
-    title: Welcome to DSC 10
 
-    # place contents here; if Null, no box is displayed
-    contents: Null
+    # what goes in the box. can be markdown or HTML. if Null, no box is
+    # displayed
+    contents: |
+        ### Welcome to DSC 40B in Fall 2020
 
-    # if True, make it red
-    urgent: False
+        Here's a checklist to get you started:
 
+        - join [Campuswire](http://campuswire.com) with code {{ course.campuswire_code }}
+        - join [Gradescope](http://gradescope.com) with code {{ course.gradescope_code }}
+        - read the [syllabus](./syllabus.html)
 
-buttons:
-    top:
-        - text: Syllabus
-          subtext: FAQ, etc.
-          url: ./syllabus.html
-          icon: em-blue_book
-
-        - text: Office Hours
-          subtext: Calendar
-          url: ./office_hours.html
-          icon: em-hourglass_flowing_sand
-
-        - text: Campuswire
-          subtext: Message Board
-          url: www.campuswire.com
-          icon: em-mega
-
-        - text: Gradescope
-          subtext: Gradebook
-          url: www.gradescope.com
-          icon: em-bar_chart
-
-    bottom:
-        - text: Textbook
-          subtext: Dive into Data Science
-          url: ./syllabus.html
-          icon: em-blue_book
-
-        - text: All Resources
-          subtext: Calendar
-          url: ./resources.html
-          icon: em-hourglass_flowing_sand
+    # if True, the box will be red
+    urgent: false
 
 
-listings:
-    homework:
-        collection: homeworks
-        numbered: true
-        columns:
-            - name: Problems
-              content: "${ metadata.name }"
-              url: "${ artifacts['homework.txt'].path }"
+buttons: !include buttons.yaml
 
-            - name: Solutions
-              content: Solution
-              url: "${ artifacts['solution.txt'].path }"
-              on_missing: "not yet posted"
-
-            - name: Due
-              content: "${ metadata.due.strftime('%A, %b %d at %H:%M:%S') }"
+listings: !include listings.yaml

@@ -36,6 +36,21 @@ def _load_published(published_path, output_path):
     return published
 
 
+def load_config(path):
+
+    class IncludingLoader(yaml.Loader):
+
+        def include(self, node):
+            included_path = path.parent / self.construct_scalar(node)
+            with included_path.open() as fileobj:
+                return yaml.load(fileobj, IncludingLoader)
+
+    IncludingLoader.add_constructor('!include', IncludingLoader.include)
+
+    with path.open() as fileobj:
+        return yaml.load(fileobj, Loader=IncludingLoader)
+
+
 def _interpolate(contents, context):
     as_template = jinja2.Template(
         contents,
@@ -100,8 +115,7 @@ def broadcast(input_path, output_path, published_path=None):
         published = None
 
     # load the configuration file
-    with (input_path / "config.yaml").open() as fileobj:
-        config = yaml.load(fileobj, Loader=yaml.Loader)
+    config = load_config(input_path / 'config.yaml')
 
     # load the theme environment
     theme_templates = jinja2.Environment(

@@ -5,9 +5,5 @@
 {% endif %}
 
 <div class="alert {{ class }}">
-    {% if config['title'] is not none %}
-    <h3>{{ config['title'] }}</h3>
-    {% endif %}
-
     <p>{{ config['contents'] }}</p>
 </div>

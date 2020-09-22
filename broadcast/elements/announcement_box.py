@@ -5,7 +5,6 @@ from textwrap import dedent
 
 SCHEMA = {
     "contents": {"type": "string", "nullable": True},
-    "title": {"type": "string", "default": None, "nullable": True},
     "urgent": {"type": "boolean", "default": False}
 }
 

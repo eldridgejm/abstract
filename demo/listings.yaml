@@ -1,0 +1,15 @@
+homework:
+    collection: homeworks
+    numbered: true
+    columns:
+        - name: Problems
+          content: "${ metadata.name }"
+          url: "${ artifacts['homework.txt'].path }"
+
+        - name: Solutions
+          content: Solution
+          url: "${ artifacts['solution.txt'].path }"
+          on_missing: "not yet posted"
+
+        - name: Due
+          content: "${ metadata.due.strftime('%A, %b %d at %H:%M:%S') }"

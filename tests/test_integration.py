@@ -18,7 +18,7 @@ class Demo:
 
         content = self.add_to_config(
             """
-            template:
+            theme:
                 page_title: "example theme"
             """
         )
