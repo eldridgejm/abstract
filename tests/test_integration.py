@@ -12,41 +12,26 @@ class Demo:
         self.path = path
         self.builddir = self.path / "_build"
         (path / "pages").mkdir()
-        (path / 'config.yaml').touch()
+        (path / "config.yaml").touch()
 
-        self._init_theme()
+        shutil.copytree(pathlib.Path(__file__).parent / "theme", path / "theme")
 
-
-    def _init_theme(self):
-        (self.path / 'theme' / 'templates').mkdir(parents=True)
-        (self.path / 'theme' / 'pages').mkdir(parents=True)
-        (self.path / 'theme' / 'static').mkdir(parents=True)
-
-        base_template = dedent(
+        content = self.add_to_config(
             """
-            <html>
-                <head>
-                    <title>example theme</title>
-                </head>
-                <body>
-                    {{ body }}
-                </body>
-            </html>
+            template:
+                page_title: "example theme"
             """
         )
-        with (self.path / 'theme' / 'templates' / 'base.html').open('w') as fileobj:
-            fileobj.write(base_template)
-
 
     def use_example_published(self, s):
         src = pathlib.Path(__file__).parent / s
-        dst = self.builddir / 'published'
+        dst = self.builddir / "published"
         shutil.copytree(src, dst)
         return dst
 
     def use_example_theme(self, s):
         src = pathlib.Path(__file__).parent / s
-        dst = self.path / 'theme'
+        dst = self.path / "theme"
         shutil.copytree(src, dst)
         return dst
 
@@ -56,7 +41,7 @@ class Demo:
             fileobj.write(content)
 
     def make_theme_page(self, name, content):
-        path = self.path / 'theme' / "pages" / name
+        path = self.path / "theme" / "pages" / name
         with path.open("w") as fileobj:
             fileobj.write(content)
 
@@ -65,8 +50,8 @@ class Demo:
             return fileobj.read()
 
     def add_to_config(self, content):
-        with (self.path / 'config.yaml').open('a') as fileobj:
-            fileobj.write(content)
+        with (self.path / "config.yaml").open("a") as fileobj:
+            fileobj.write(dedent(content))
 
 
 @fixture
@@ -93,10 +78,12 @@ def test_pages_have_access_to_published_artifacts(demo):
         """
     )
     demo.make_page("one.md", contents)
-    demo.use_example_published('example_published_1')
+    demo.use_example_published("example_published_1")
 
     # when
-    broadcast.broadcast(demo.path, demo.builddir, published_path=demo.builddir / 'published')
+    broadcast.broadcast(
+        demo.path, demo.builddir, published_path=demo.builddir / "published"
+    )
 
     # then
     assert "published/homeworks/01-intro/homework.pdf" in demo.get_output("one.html")
@@ -104,7 +91,7 @@ def test_pages_have_access_to_published_artifacts(demo):
 
 def test_pages_have_access_to_elements(demo):
     # given
-    demo.make_page("one.md", "${ elements.announcement_box('announcement') }")
+    demo.make_page("one.md", "${ elements.announcement_box(config['announcement']) }")
     config = dedent(
         """
         announcement:
@@ -118,18 +105,18 @@ def test_pages_have_access_to_elements(demo):
     broadcast.broadcast(demo.path, demo.builddir)
 
     # then
-    assert 'This is a test' in demo.get_output('one.html')
+    assert "This is a test" in demo.get_output("one.html")
 
 
 def test_pages_are_rendered_in_base_template(demo):
     # given
-    demo.make_page('one.md', 'this is the page')
+    demo.make_page("one.md", "this is the page")
 
     # when
     broadcast.broadcast(demo.path, demo.builddir)
 
     # then
-    assert '<title>example theme</title>' in demo.get_output('one.html')
+    assert "<title>example theme</title>" in demo.get_output("one.html")
 
 
 def test_theme_pages_have_access_to_published_artifacts(demo):
@@ -140,10 +127,12 @@ def test_theme_pages_have_access_to_published_artifacts(demo):
         """
     )
     demo.make_theme_page("index.html", contents)
-    demo.use_example_published('example_published_1')
+    demo.use_example_published("example_published_1")
 
     # when
-    broadcast.broadcast(demo.path, demo.builddir, published_path=demo.builddir / 'published')
+    broadcast.broadcast(
+        demo.path, demo.builddir, published_path=demo.builddir / "published"
+    )
 
     # then
     assert "published/homeworks/01-intro/homework.pdf" in demo.get_output("index.html")
@@ -151,7 +140,9 @@ def test_theme_pages_have_access_to_published_artifacts(demo):
 
 def test_theme_pages_have_access_to_elements(demo):
     # given
-    demo.make_theme_page("index.html", "${ elements.announcement_box('announcement') }")
+    demo.make_theme_page(
+        "index.html", "${ elements.announcement_box(config['announcement']) }"
+    )
     config = dedent(
         """
         announcement:
@@ -165,15 +156,15 @@ def test_theme_pages_have_access_to_elements(demo):
     broadcast.broadcast(demo.path, demo.builddir)
 
     # then
-    assert 'This is a test' in demo.get_output('index.html')
+    assert "This is a test" in demo.get_output("index.html")
 
 
 def test_theme_pages_are_rendered_in_base_template(demo):
     # given
-    demo.make_theme_page('index.html', 'this is the page')
+    demo.make_theme_page("index.html", "this is the page")
 
     # when
     broadcast.broadcast(demo.path, demo.builddir)
 
     # then
-    assert '<title>example theme</title>' in demo.get_output('index.html')
+    assert "<title>example theme</title>" in demo.get_output("index.html")

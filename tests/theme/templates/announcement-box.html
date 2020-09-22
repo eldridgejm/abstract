@@ -1,0 +1,13 @@
+{% if config['urgent'] %}
+    {% set class = "alert-danger" %}
+{% else %}
+    {% set class = "alert-primary" %}
+{% endif %}
+
+<div class="alert {{ class }}">
+    {% if config['title'] is not none %}
+    <h3>{{ config['title'] }}</h3>
+    {% endif %}
+
+    <p>{{ config['contents'] }}</p>
+</div>

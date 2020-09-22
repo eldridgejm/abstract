@@ -1,0 +1,37 @@
+<div class="listing">
+    <table class="table">
+        <thead>
+            <tr>
+            {% if config['numbered'] %}
+                <th scope="col">#</th>
+            {% endif %}
+            {% for column in config['columns'] %}
+                <th scope="col">{{ column['name'] }}</th>
+            {% endfor %}
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for publication in publications %}
+                <tr>
+                    {% if config['numbered'] %}
+                        <th scope="row"> {{ loop.index }}</th>
+                    {% endif %}
+                    {% for column in config['columns'] %}
+                        <td>
+                            {% set content = interpolate(publication, column['content']) %}
+                            {% set url = interpolate(publication, column['url']) %}
+                            {% if url is not none %}
+                                <a href="{{ url }}">{{ content }}</a>
+                            {% elif column['url'] is not none and url is none %}
+                                <span class="text-muted">{{ column['on_missing'] }}</span>
+                            {% else %}
+                                {{ content }}
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
