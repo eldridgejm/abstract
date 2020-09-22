@@ -72,16 +72,14 @@ def _render_page(environment, body, config):
 
 
 def _all_pages(input_path, output_path):
+    for page_path in (input_path / 'pages').iterdir():
+        root = input_path / 'pages'
+        new_path = output_path / page_path.relative_to(root).with_suffix(".html")
 
-    for location in ["pages", "theme/pages"]:
-        for page_path in (input_path / location).iterdir():
-            root = input_path / location
-            new_path = output_path / page_path.relative_to(root).with_suffix(".html")
+        with page_path.open() as fileobj:
+            contents = fileobj.read()
 
-            with page_path.open() as fileobj:
-                contents = fileobj.read()
-
-            yield contents, new_path
+        yield contents, new_path
 
 
 class Elements:
