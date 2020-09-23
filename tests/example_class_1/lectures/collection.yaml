@@ -7,3 +7,14 @@ schema:
             type: string
         date:
             type: date
+        number:
+            type: integer
+        videos:
+            type: list
+            schema:
+                type: dict
+                schema:
+                    title:
+                        type: string
+                    url:
+                        type: string

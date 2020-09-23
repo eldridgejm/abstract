@@ -8,3 +8,5 @@ schema:
             type: datetime
         released:
             type: datetime
+        number:
+            type: integer

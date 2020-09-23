@@ -11,6 +11,7 @@ import publish
 import yaml
 
 from . import elements
+from . import exceptions
 
 
 def load_published(published_path, output_path):
@@ -20,6 +21,9 @@ def load_published(published_path, output_path):
     their path relative to ``published.json``. But we need the path to the
     artifact from the website root: the ``output_path``. This function loads the
     artifacts and performs the update.
+
+    Some artifacts have ``None`` as their path. This signals that the artifact is
+    defined, but not yet released. This function leaves such paths as ``None``.
 
     Parameters
     ----------
@@ -44,6 +48,9 @@ def load_published(published_path, output_path):
     # we need to update their paths to be relative to output directory; this function
     # will do it for one artifact
     def _update_path(artifact):
+        if artifact.path is None:
+            return artifact
+
         relative_path = published_path.relative_to(output_path) / artifact.path
         return artifact._replace(path=relative_path)
 
@@ -121,13 +128,13 @@ class _Elements:
         return jinja2.contextfunction(functools.partial(func, self.environment))
 
 
-def _render_page(contents, context):
-    """Given page contents and a context, perform Jinja2 interpolation.
+def _render_page(path, context):
+    """Given page path and a context, perform Jinja2 interpolation.
 
     Parameters
     ----------
-    contents : str
-        The page contents.
+    path : str
+        The page'spath.
     context : dict
         A dictionary mapping variable names to values available during
         interpolation.
@@ -142,11 +149,15 @@ def _render_page(contents, context):
     Variables are delimited by ${ }, and blocks are delimited by ${%  %}.
 
     """
-    template = jinja2.Template(
-        contents,
-    )
+    with path.open() as fileobj:
+        contents = fileobj.read()
 
-    return template.render(**context)
+    template = jinja2.Template(contents, undefined=jinja2.StrictUndefined)
+
+    try:
+        return template.render(**context)
+    except jinja2.UndefinedError as exc:
+        raise exceptions.PageError(f'Problem rendering "{path}": {exc}')
 
 
 def _convert_markdown_to_html(contents):
@@ -187,15 +198,13 @@ def _all_pages(input_path, output_path):
         root = input_path / "pages"
         new_path = output_path / page_path.relative_to(root).with_suffix(".html")
 
-        with page_path.open() as fileobj:
-            contents = fileobj.read()
-
-        yield contents, new_path
+        yield page_path, new_path
 
 
 def _render_base(base_environment, body_html, config):
-    return base_environment.get_template('page.html').render(body=body_html, config=config)
-
+    return base_environment.get_template("page.html").render(
+        body=body_html, config=config
+    )
 
 
 def _validate_theme_schema(input_path, config):
@@ -212,26 +221,29 @@ def _validate_theme_schema(input_path, config):
 def _create_element_environment(input_path):
     """Create the element environment and its custom filters."""
     element_environment = jinja2.Environment(
-        loader=jinja2.FileSystemLoader(input_path / 'theme' / 'elements'),
+        loader=jinja2.FileSystemLoader(input_path / "theme" / "elements"),
+        undefined=jinja2.StrictUndefined,
     )
 
     def evaluate(s, **kwargs):
         _DELIMITER_KWARGS = dict(
-                variable_start_string="${",
-                variable_end_string="}",
-                block_start_string="${%",
-                block_end_string="%}",
-                )
+            variable_start_string="${",
+            variable_end_string="}",
+            block_start_string="${%",
+            block_end_string="%}",
+        )
 
         try:
-            return jinja2.Template(s, **_DELIMITER_KWARGS).render(**kwargs)
-        except TypeError:
-            return None
-        except jinja2.UndefinedError:
-            return None
+            return jinja2.Template(
+                s, **_DELIMITER_KWARGS, undefined=jinja2.StrictUndefined
+            ).render(**kwargs)
+        except jinja2.UndefinedError as exc:
+            raise exceptions.ElementError(
+                f'Unknown variable in template string "{s}": {exc}'
+            )
 
-    element_environment.filters['evaluate'] = evaluate
-    element_environment.filters['markdown_to_html'] = _convert_markdown_to_html
+    element_environment.filters["evaluate"] = evaluate
+    element_environment.filters["markdown_to_html"] = _convert_markdown_to_html
 
     return element_environment
 
@@ -241,8 +253,6 @@ def _create_base_template_environment(input_path):
     return jinja2.Environment(
         loader=jinja2.FileSystemLoader(input_path / "theme" / "base_templates"),
     )
-
-
 
 
 def broadcast(input_path, output_path, published_path=None):
@@ -274,12 +284,12 @@ def broadcast(input_path, output_path, published_path=None):
     context = {
         "elements": _Elements(environment=element_environment),
         "config": config,
-        "published": published
+        "published": published,
     }
 
     # convert user pages
-    for contents, new_path in _all_pages(input_path, output_path):
-        interpolated = _render_page(contents, context)
+    for old_path, new_path in _all_pages(input_path, output_path):
+        interpolated = _render_page(old_path, context)
         body_html = _convert_markdown_to_html(interpolated)
         html = _render_base(base_environment, body_html, config)
 

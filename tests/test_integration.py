@@ -1,10 +1,18 @@
 import pathlib
 import shutil
+import datetime
+import subprocess
 from textwrap import dedent
 
-from pytest import fixture
+import publish
+
+from pytest import raises, fixture, mark
 
 import broadcast
+
+
+# basic tests
+# --------------------------------------------------------------------------------------
 
 
 class Demo:
@@ -117,3 +125,120 @@ def test_pages_are_rendered_in_base_template(demo):
 
     # then
     assert "<html>" in demo.get_output("one.html")
+
+
+def test_raises_if_an_unknown_variable_is_accessed_during_page_render(demo):
+    # given
+    demo.make_page("one.md", "{{ foo }}")
+
+    # when
+    with raises(broadcast.PageError) as excinfo:
+        broadcast.broadcast(demo.path, demo.builddir)
+
+    assert 'one.md' in str(excinfo.value)
+
+
+def test_raises_if_an_unknown_attribute_is_accessed_during_page_render(demo):
+    # given
+    demo.make_page("one.md", "{{ config.this_dont_exist }}")
+
+    # when
+    with raises(broadcast.PageError) as excinfo:
+        broadcast.broadcast(demo.path, demo.builddir)
+
+    assert 'one.md' in str(excinfo.value)
+
+
+def test_raises_if_an_unknown_attribute_is_accessed_during_element_render(demo):
+    # given
+
+    # x is in the element evaluation context, but y is not
+    demo.add_to_config(dedent(
+        """
+        announcement:
+            contents: Here ${ y } is
+        """
+        ))
+    demo.make_page("one.md", "{{ elements.announcement_box(config['announcement']) }}")
+
+    # when
+    with raises(Exception) as excinfo:
+        broadcast.broadcast(demo.path, demo.builddir)
+
+    assert '${ y }' in str(excinfo.value)
+
+
+
+# default theme tests
+# --------------------------------------------------------------------------------------
+
+# here we test the default theme on an example class. The example class has homeworks,
+# labs, lectures, and discussions. 
+#   
+#   - the last lab was released October 15 and is due on October 22
+#   - the last homework was released October 15 and is due on October 22
+#   - the last lecture is on October 22
+#   - the last discussion is on October 15
+#
+# the first week is set to start on Monday, September 28
+
+
+EXAMPLE_CLASS = pathlib.Path(__file__).parent / "example_class_1"
+DEFAULT_THEME = pathlib.Path(__file__).parent / "../default_theme"
+
+DATETIME = datetime.datetime(2020, 10, 10, 23, 0, 0)
+
+
+def example_class(tempdir, date):
+    destination = tempdir / "example_class"
+    shutil.copytree(EXAMPLE_CLASS, destination)
+    shutil.copytree(DEFAULT_THEME, destination / "website" / "theme")
+
+    builddir = destination / "website" / "_build"
+    if builddir.exists():
+        shutil.rmtree(builddir)
+
+    builddir.mkdir()
+
+    def now():
+        return date
+
+    publish.cli(
+        [str(destination), str(destination / "website/_build/published"),
+            '--skip-directories', 'template'],
+        now=now,
+    )
+
+    return destination
+
+
+@fixture(scope='module')
+def publish_on_oct_16(tmp_path_factory):
+    tempdir = tmp_path_factory.mktemp('example')
+    return example_class(tempdir, datetime.datetime(2020, 10, 16, 0, 0, 0))
+
+
+@fixture(scope='module')
+def publish_on_oct_15(tmp_path_factory):
+    tempdir = tmp_path_factory.mktemp('example')
+    return example_class(tempdir, datetime.datetime(2020, 10, 15, 0, 0, 0))
+
+
+@mark.slow
+def test_fixture(publish_on_oct_15):
+    path = publish_on_oct_15
+    assert (path / "website" / "theme").exists()
+    assert (path / 'website' / '_build' / "published" / "published.json").exists()
+
+
+def test_last_homework_visible(publish_on_oct_15):
+    # when
+    path = publish_on_oct_15
+    broadcast.broadcast(path / 'website/', path / 'website/_build', path / 'website/_build/published')
+
+    # then
+    with (path / 'website' / '_build' / 'index.html').open() as fileobj:
+        contents = fileobj.read()
+
+    assert 'Homework 3' in contents
+    assert 'Thursday' in contents

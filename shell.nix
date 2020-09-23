@@ -8,8 +8,8 @@ let
     src = fetchFromGitHub {
       owner = "eldridgejm";
       repo = "publish";
-      rev = "2cfb9b19240842dc4aff106a427975e1e903a2ae";
-      sha256 = "1n7dy34sn7144yg9pnyg5l8ah25lsjp31b2ga3chb0vcsrwq51kb";
+      rev = "cfa801c5a1ff2bc5ab9a3d85378dbfeb08a1e236";
+      sha256 = "1imqsmvmzqhcwj4lsfy0n4w10kssjwgjk2mbax7g8p82yrp3g87i";
     };
   };
 in
@@ -21,6 +21,6 @@ in
     propagatedBuildInputs = with python37Packages; [ jinja2 pyyaml markdown publish ];
 
     # needed for development
-    nativeBuildInputs = with python37Packages; [ pytest black flake8 ipython sphinx sphinx_rtd_theme ];
+    nativeBuildInputs = with python37Packages; [ pytest black flake8 ipython sphinx sphinx_rtd_theme publish ];
 
   }

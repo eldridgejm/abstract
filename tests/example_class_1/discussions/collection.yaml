@@ -1,0 +1,11 @@
+schema:
+    required_artifacts:
+        - discussion.ipynb
+
+    metadata_schema:
+        topic: 
+            type: string
+        date:
+            type: date
+        number:
+            type: integer

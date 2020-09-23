@@ -1,0 +1,30 @@
+homework:
+    collection: homeworks
+    numbered: true
+    columns:
+        - name: Problems
+          content: "Homework ${ metadata.number }"
+          url: "${ artifacts['homework.txt'].path }"
+
+        - name: Solutions
+          content: Solution
+          url: "${ artifacts['solution.txt'].path }"
+          on_missing_url: "not yet posted"
+
+        - name: Due
+          content: "${ metadata.due.strftime('%A, %b %d at %H:%M:%S') }"
+
+
+lecture_notebooks:
+    collection: lectures
+    numbered: true
+    columns:
+        - name: Blank Notebook
+          content: "Lecture ${ metadata.number } &mdash; ${ metadata.topic }"
+          url: "${ artifacts['lecture.ipynb'].path }"
+        - name: Filled Notebook
+          content: "Filled Notebook"
+          url: "${ artifacts['lecture.ipynb'].path }"
+
+        - name: Date
+          content: "${ metadata.date.strftime('%A, %b %d') }"
