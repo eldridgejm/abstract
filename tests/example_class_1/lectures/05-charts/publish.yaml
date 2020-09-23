@@ -1,0 +1,8 @@
+metadata:
+    topic: Charts
+    date: 2020-10-15
+
+
+artifacts:
+    lecture.ipynb:
+        recipe: touch lecture.ipynb

@@ -1,0 +1,9 @@
+schema:
+    required_artifacts:
+        - lecture.ipynb
+
+    metadata_schema:
+        topic: 
+            type: string
+        date:
+            type: date

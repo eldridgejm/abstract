@@ -14,7 +14,7 @@ class Demo:
         (path / "pages").mkdir()
         (path / "config.yaml").touch()
 
-        shutil.copytree(pathlib.Path(__file__).parent / "theme", path / "theme")
+        shutil.copytree(pathlib.Path(__file__).parent / "basic_theme", path / "theme")
 
         self.add_to_config(
             """
@@ -74,7 +74,7 @@ def test_pages_have_access_to_published_artifacts(demo):
     # given
     contents = dedent(
         """
-        ${ published.collections.homeworks.publications["01-intro"].artifacts["homework.pdf"].path }
+        {{ published.collections.homeworks.publications["01-intro"].artifacts["homework.pdf"].path }}
         """
     )
     demo.make_page("one.md", contents)
@@ -91,7 +91,7 @@ def test_pages_have_access_to_published_artifacts(demo):
 
 def test_pages_have_access_to_elements(demo):
     # given
-    demo.make_page("one.md", "${ elements.announcement_box(config['announcement']) }")
+    demo.make_page("one.md", "{{ elements.announcement_box(config['announcement']) }}")
     config = dedent(
         """
         announcement:
@@ -116,4 +116,4 @@ def test_pages_are_rendered_in_base_template(demo):
     broadcast.broadcast(demo.path, demo.builddir)
 
     # then
-    assert "<title>example theme</title>" in demo.get_output("one.html")
+    assert "<html>" in demo.get_output("one.html")

@@ -1,0 +1,109 @@
+<div class="schedule">
+
+{% set lecture_config = element_config['lecture'] %}
+{% set all_lectures = published.collections[lecture_config['collection']] %}
+
+{% set assignment_configs = element_config['assignments'] %}
+
+
+{% macro display_lecture(lecture, lecture_config, last) %}
+    <div class="schedule-lecture {{ 'last' if last -}}">
+        <h3 class="schedule-week-component-title">
+            {{ lecture_config['title'] | evaluate(lecture=lecture) }}
+        </h3>
+        <div class="schedule-lecture-resources">
+            <ul class="schedule-lecture-resources">
+            {% for resource in lecture_config['resources'] %}
+            <li class="schedule-lecture-resource">
+                    <i class="em-svg {{ resource.icon }} schedule-resource-icon" aria-role="presentation" aria-label="BIRD"></i>
+                    {{ resource.text | evaluate(lecture=lecture) }}
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
+
+        <div class="schedule-lecture-parts">
+            <ol class="schedule-lecture-parts">
+            {% for part in lecture.metadata[lecture_config['parts']['key']] %}
+                <li>
+                    {{ lecture_config['parts']['text'] | evaluate(part=part) }}
+                </li>
+            {% endfor %}
+            </ol>
+        </div>
+    </div>
+{% endmacro %}
+
+
+{% macro display_assignment(published, week, assignment_config) %}
+
+    {% set all_assignments = published.collections[assignment_config['collection']] %}
+    {% set week_assignments = week.filter(all_assignments, assignment_config['date_key']) %}
+
+    {% for key, assignment in week_assignments.publications.items() | sort(attribute='0') %}
+        <div class="list-group-item">
+            <h3 class="schedule-week-component-title">
+                {{ assignment_config['title'] | evaluate(assignment=assignment) }}
+            </h3>
+            <div class="schedule-assignment-resources">
+                <ul class="schedule-assignment-resources">
+                {% for resource in assignment_config['resources'] %}
+                <li class="schedule-assignment-resource">
+                        <i class="em-svg {{ resource.icon }} schedule-resource-icon" aria-role="presentation" aria-label="BIRD"></i>
+                        {{ resource.text | evaluate(assignment=assignment) | default(resource['on_missing'], true) }}
+                    </li>
+                {% endfor %}
+                </ul>
+            </div>
+            {% set due_time = assignment.metadata[assignment_config['due_key']] %}
+            <div class="badge badge-pill {{ 'badge-danger' if now < due_time else 'badge-light' }}">
+                {% if now > due_time %}
+                    Was due
+                {% else %}
+                    Due
+                {% endif %}
+                {{ due_time.strftime('%a, %b %d at %H:%M %p') }}
+            </div>
+        </div>
+    {% endfor %}
+
+{% endmacro %}
+
+
+{% for week in weeks -%}
+
+    <div class="schedule-week {{ 'schedule-week-future' if week.start_date > now.date() }}">
+        <div class="schedule-week-title">
+            <h1 class="schedule-week-title-number">
+                {% if loop.first %}
+                    This Week
+                {% else %}
+                    Week {{ week.number }}
+                {% endif %}
+            </h1>
+            <h2 class="schedule-week-title-topic">{{ week.topic }}</h2>
+        </div>
+
+        <div class="row">
+            <div class="col-md-7">
+                {% set week_lectures = week.filter(all_lectures, lecture_config['date_key']) %}
+                {% for key, lecture in week_lectures.publications.items() | sort(attribute='0', reverse=true) %}
+                    {{ display_lecture(lecture, lecture_config, loop.last) }}
+                {% endfor %}
+
+            </div>
+            <div class="col-md-5">
+                <div class="list-group">
+                    {% for assignment_config in assignment_configs %}
+                        {{ display_assignment(published, week, assignment_config) }}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endfor %}
+
+
+</div>
+

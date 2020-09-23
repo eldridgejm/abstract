@@ -1,0 +1,8 @@
+metadata:
+    topic: Probability
+    date: 2020-10-22
+
+
+artifacts:
+    lecture.ipynb:
+        recipe: touch lecture.ipynb

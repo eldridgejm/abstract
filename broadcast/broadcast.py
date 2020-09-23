@@ -110,20 +110,18 @@ class _Elements:
 
     """
 
-    def __init__(self, templates, published):
-        self.templates = templates
-        self.published = published
+    def __init__(self, environment):
+        self.environment = environment
 
     def __getattr__(self, attr):
         try:
             func = getattr(elements, attr)
         except AttributeError:
             raise RuntimeError(f'There is no element named "{attr}".')
-        return functools.partial(func, self.templates, self.published)
+        return jinja2.contextfunction(functools.partial(func, self.environment))
 
 
-
-def _interpolate(contents, context):
+def _render_page(contents, context):
     """Given page contents and a context, perform Jinja2 interpolation.
 
     Parameters
@@ -137,22 +135,18 @@ def _interpolate(contents, context):
     Returns
     -------
     str
-        The interpolated string.
+        The input string after interpolation.
 
     Notes
     -----
     Variables are delimited by ${ }, and blocks are delimited by ${%  %}.
 
     """
-    as_template = jinja2.Template(
+    template = jinja2.Template(
         contents,
-        variable_start_string="${",
-        variable_end_string="}",
-        block_start_string="${%",
-        block_end_string="%}",
     )
 
-    return as_template.render(**context)
+    return template.render(**context)
 
 
 def _convert_markdown_to_html(contents):
@@ -170,23 +164,6 @@ def _convert_markdown_to_html(contents):
 
     """
     return markdown.markdown(contents)
-
-
-def _render_page(environment, body, config):
-    """Place a block of HTML inside of the container template.
-
-    Parameters
-    ----------
-    environment
-        The Jinja2 environment used to load the "base.html" template.
-    body : str
-        The HTML body that will be placed inside of the template.
-    config : dict
-        The configuration dictionary. The template may use configuration values
-        to determine, for instance, the page title.
-
-    """
-    return environment.get_template("base.html").render(body=body, config=config)
 
 
 def _all_pages(input_path, output_path):
@@ -216,6 +193,11 @@ def _all_pages(input_path, output_path):
         yield contents, new_path
 
 
+def _render_base(base_environment, body_html, config):
+    return base_environment.get_template('page.html').render(body=body_html, config=config)
+
+
+
 def _validate_theme_schema(input_path, config):
     """Validate a config against the theme's schema."""
     with (input_path / "theme" / "schema.yaml").open() as fileobj:
@@ -225,6 +207,42 @@ def _validate_theme_schema(input_path, config):
     result = validator.validate(config)
     if not result:
         raise RuntimeError(f"Invalid theme config: {validator.errors}")
+
+
+def _create_element_environment(input_path):
+    """Create the element environment and its custom filters."""
+    element_environment = jinja2.Environment(
+        loader=jinja2.FileSystemLoader(input_path / 'theme' / 'elements'),
+    )
+
+    def evaluate(s, **kwargs):
+        _DELIMITER_KWARGS = dict(
+                variable_start_string="${",
+                variable_end_string="}",
+                block_start_string="${%",
+                block_end_string="%}",
+                )
+
+        try:
+            return jinja2.Template(s, **_DELIMITER_KWARGS).render(**kwargs)
+        except TypeError:
+            return None
+        except jinja2.UndefinedError:
+            return None
+
+    element_environment.filters['evaluate'] = evaluate
+    element_environment.filters['markdown_to_html'] = _convert_markdown_to_html
+
+    return element_environment
+
+
+def _create_base_template_environment(input_path):
+    """Create the base template environment."""
+    return jinja2.Environment(
+        loader=jinja2.FileSystemLoader(input_path / "theme" / "base_templates"),
+    )
+
+
 
 
 def broadcast(input_path, output_path, published_path=None):
@@ -245,29 +263,25 @@ def broadcast(input_path, output_path, published_path=None):
     # load the configuration file
     config = load_config(input_path / "config.yaml")
 
-    # load the theme environment
-    theme_templates = jinja2.Environment(
-        loader=jinja2.FileSystemLoader(input_path / "theme" / "templates")
-    )
-
     # validate the config against the theme's schema
     _validate_theme_schema(input_path, config)
 
-    # the context used during interpolation
-    context = {
-        "elements": _Elements(templates=theme_templates, published=published),
-        "config": config,
-    }
+    # create environments for evaluation of base templates and element templates
+    element_environment = _create_element_environment(input_path)
+    base_environment = _create_base_template_environment(input_path)
 
-    if published is not None:
-        context["published"] = published
+    # construct the context used during page rendering
+    context = {
+        "elements": _Elements(environment=element_environment),
+        "config": config,
+        "published": published
+    }
 
     # convert user pages
     for contents, new_path in _all_pages(input_path, output_path):
-
-        interpolated = _interpolate(contents, context)
+        interpolated = _render_page(contents, context)
         body_html = _convert_markdown_to_html(interpolated)
-        html = _render_page(theme_templates, body_html, config)
+        html = _render_base(base_environment, body_html, config)
 
         with new_path.open("w") as fileobj:
             fileobj.write(html)

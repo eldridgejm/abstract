@@ -1,0 +1,8 @@
+metadata:
+    topic: Introduction
+    date: 2020-10-01
+
+
+artifacts:
+    lecture.ipynb:
+        recipe: touch lecture.ipynb

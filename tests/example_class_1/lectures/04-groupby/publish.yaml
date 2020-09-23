@@ -1,0 +1,8 @@
+metadata:
+    topic: Groupby
+    date: 2020-10-13
+
+
+artifacts:
+    lecture.ipynb:
+        recipe: touch lecture.ipynb

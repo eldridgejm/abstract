@@ -1,0 +1,10 @@
+schema:
+    required_artifacts:
+        - lab.txt
+        - solution.txt
+
+    metadata_schema:
+        due:
+            type: datetime
+        released:
+            type: datetime

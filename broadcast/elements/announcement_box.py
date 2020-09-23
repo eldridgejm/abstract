@@ -8,16 +8,16 @@ SCHEMA = {
 }
 
 
-def announcement_box(templates, published, config):
+def announcement_box(environment, context, element_config):
     validator = cerberus.Validator(SCHEMA)
-    config = validator.validated(config)
+    element_config = validator.validated(element_config)
 
-    if config is None:
+    if element_config is None:
         raise RuntimeError(f"Invalid config: {validator.errors}")
 
-    if config["contents"] is None:
-        return ""
-
-    config["contents"] = markdown.markdown(config["contents"])
-    template = templates.get_template("announcement-box.html")
-    return template.render(config=config)
+    template = environment.get_template("announcement_box.html")
+    return template.render(
+        element_config=element_config,
+        config=context["config"],
+        published=context["published"],
+    )

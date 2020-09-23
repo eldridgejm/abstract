@@ -1,0 +1,8 @@
+metadata:
+    topic: Functions
+    date: 2020-10-20
+
+
+artifacts:
+    lecture.ipynb:
+        recipe: touch lecture.ipynb

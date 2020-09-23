@@ -13,42 +13,25 @@ SCHEMA = {
                 "content": {"type": "string"},
                 "name": {"type": "string"},
                 "url": {"type": "string", "default": None, "nullable": True},
-                "on_missing": {"type": "string", "default": None, "nullable": True},
+                "on_missing_url": {"type": "string", "default": None, "nullable": True},
             },
         },
     },
 }
 
 
-def interpolate(publication, s):
-    if s is None:
-        return None
-
-    as_template = jinja2.Template(
-        s, variable_start_string="${", variable_end_string="}"
-    )
-
-    try:
-        return as_template.render(
-            artifacts=publication.artifacts, metadata=publication.metadata
-        )
-    except jinja2.UndefinedError:
-        return None
-
-
-def listing(templates, published, config):
+def listing(environment, context, element_config):
     validator = cerberus.Validator(SCHEMA, require_all=True)
-    config = validator.validated(config)
+    element_config = validator.validated(element_config)
 
-    if config is None:
+    if element_config is None:
         raise RuntimeError(f"Invalid config: {validator.errors}")
 
     # sort the publications by key
-    publications = published.collections[config["collection"]].publications
-    publications = sorted(publications.items())
-    publications = [v for (j, v) in publications]
+    collections = context["published"].collections
+    collection = collections[element_config["collection"]]
+    publications_and_keys = sorted(collection.publications.items())
+    publications = [v for (j, v) in publications_and_keys]
 
-    template = templates.get_template("listing.html")
-    return template.render(
-        config=config, publications=publications, interpolate=interpolate
-    )
+    template = environment.get_template("listing.html")
+    return template.render(element_config=element_config, publications=publications,)

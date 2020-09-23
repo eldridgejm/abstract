@@ -1,10 +1,15 @@
-All Resources
+All Homeworks
 =============
 
-As new homeworks, lecture slides, etc. come available, they are posted to the schedule
-on the main page. They're also aggregated here by type.
+{{ elements.listing(config['listings']['homework']) }}
 
-Homeworks
----------
+All Lecture Notebooks
+=====================
 
-${ elements.listing(config['listings']['homework']) }
+{{ elements.listing(config['listings']['lecture_notebooks']) }}
+
+Exam Solutions
+==============
+
+- Exam 1
+- Exam 2
