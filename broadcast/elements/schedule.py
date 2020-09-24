@@ -1,4 +1,3 @@
-import typing
 import datetime
 import cerberus
 import publish
@@ -25,7 +24,7 @@ SCHEMA = {
         "type": "dict",
         "keysrules": {"type": "string"},
         "valuesrules": {"type": "date"},
-        "required": False
+        "required": False,
     },
     "week_announcements": {
         "type": "list",
@@ -118,7 +117,6 @@ class Week:
 def generate_weeks(element_config, published):
     weeks = []
     for i, topic in enumerate(element_config["week_topics"]):
-        number = element_config["first_week_number"] + i
         week = Week(
             published=published,
             number=element_config["first_week_number"] + i,

@@ -1,7 +1,6 @@
 import pathlib
 import shutil
 import datetime
-import subprocess
 import lxml.html
 from textwrap import dedent
 
@@ -87,7 +86,7 @@ def test_pages_have_access_to_published_artifacts(demo):
         """
     )
     demo.make_page("one.md", contents)
-    demo.use_example_published("example_published_1")
+    demo.use_example_published("basic_published")
 
     # when
     broadcast.broadcast(
@@ -185,8 +184,8 @@ def test_raises_if_an_unknown_attribute_is_accessed_during_element_render(demo):
 # the first week is set to start on Monday, September 28
 
 
-EXAMPLE_CLASS = pathlib.Path(__file__).parent / "example_class_1"
-DEFAULT_THEME = pathlib.Path(__file__).parent / "../default_theme"
+EXAMPLE_CLASS = pathlib.Path(__file__).parent / "../example"
+DEFAULT_THEME = pathlib.Path(__file__).parent / "../example/theme"
 
 DATETIME = datetime.datetime(2020, 10, 10, 23, 0, 0)
 
@@ -220,7 +219,7 @@ def example_class(tempdir, date):
 
 def clean_build(builddir):
     for f in builddir.iterdir():
-        if not f.name == 'published':
+        if not f.name == "published":
             if f.is_dir():
                 shutil.rmtree(f)
             else:
@@ -231,7 +230,7 @@ def clean_build(builddir):
 def publish_on_oct_16(tmp_path_factory):
     tempdir = tmp_path_factory.mktemp("example_16th")
     path = example_class(tempdir, datetime.datetime(2020, 10, 16, 0, 0, 0))
-    clean_build(path / 'website' / '_build')
+    clean_build(path / "website" / "_build")
     return path
 
 
@@ -239,14 +238,15 @@ def publish_on_oct_16(tmp_path_factory):
 def publish_on_oct_15(tmp_path_factory):
     tempdir = tmp_path_factory.mktemp("example_15th")
     path = example_class(tempdir, datetime.datetime(2020, 10, 15, 0, 0, 0))
-    clean_build(path / 'website' / '_build')
+    clean_build(path / "website" / "_build")
     return path
+
 
 @fixture(scope="module")
 def publish_before_quarter(tmp_path_factory):
     tempdir = tmp_path_factory.mktemp("example_before")
     path = example_class(tempdir, datetime.datetime(2020, 9, 15, 0, 0, 0))
-    clean_build(path / 'website' / '_build')
+    clean_build(path / "website" / "_build")
     return path
 
 
@@ -260,10 +260,12 @@ def test_fixture(publish_on_oct_15):
 def test_last_homework_visible(publish_on_oct_15):
     # when
     path = publish_on_oct_15
-    clean_build(path / 'website' / '_build')
+    clean_build(path / "website" / "_build")
     broadcast.broadcast(
-        path / "website/", path / "website/_build", path / "website/_build/published",
-        now=lambda: datetime.datetime(2020, 10, 15, 12, 0, 0)
+        path / "website/",
+        path / "website/_build",
+        path / "website/_build/published",
+        now=lambda: datetime.datetime(2020, 10, 15, 12, 0, 0),
     )
 
     # then
@@ -279,20 +281,22 @@ def test_last_homework_visible(publish_on_oct_15):
 
     # get the link to the homework notebook
     [a] = div.xpath('.//a[ text() = "Homework Notebook" ]')
-    assert a.values()[0] == 'published/homeworks/03-charts_and_functions/homework.txt'
+    assert a.values()[0] == "published/homeworks/03-charts_and_functions/homework.txt"
 
     # also assert that the due date is displayed
     [elem] = div.xpath('.//*[ contains(text(), "Due")]')
-    assert 'Oct 22' in elem.text
+    assert "Oct 22" in elem.text
 
 
 def test_last_homework_solutions_not_posted_on_15th(publish_on_oct_15):
     # when
     path = publish_on_oct_15
-    clean_build(path / 'website' / '_build')
+    clean_build(path / "website" / "_build")
     broadcast.broadcast(
-        path / "website/", path / "website/_build", path / "website/_build/published",
-        now=lambda: datetime.datetime(2020, 10, 15, 12, 0, 0)
+        path / "website/",
+        path / "website/_build",
+        path / "website/_build/published",
+        now=lambda: datetime.datetime(2020, 10, 15, 12, 0, 0),
     )
 
     # then
@@ -314,10 +318,12 @@ def test_last_homework_solutions_not_posted_on_15th(publish_on_oct_15):
 def test_homework_2_solutions_posted_on_16th(publish_on_oct_16):
     # when
     path = publish_on_oct_16
-    clean_build(path / 'website' / '_build')
+    clean_build(path / "website" / "_build")
     broadcast.broadcast(
-        path / "website/", path / "website/_build", path / "website/_build/published",
-        now=lambda: datetime.datetime(2020, 10, 16, 12, 0, 0)
+        path / "website/",
+        path / "website/_build",
+        path / "website/_build/published",
+        now=lambda: datetime.datetime(2020, 10, 16, 12, 0, 0),
     )
 
     # then
@@ -339,10 +345,12 @@ def test_homework_2_solutions_posted_on_16th(publish_on_oct_16):
 def test_homework_2_solutions_not_posted_on_15th(publish_on_oct_16):
     # when
     path = publish_on_oct_16
-    clean_build(path / 'website' / '_build')
+    clean_build(path / "website" / "_build")
     broadcast.broadcast(
-        path / "website/", path / "website/_build", path / "website/_build/published",
-        now=lambda: datetime.datetime(2020, 10, 16, 12, 0, 0)
+        path / "website/",
+        path / "website/_build",
+        path / "website/_build/published",
+        now=lambda: datetime.datetime(2020, 10, 16, 12, 0, 0),
     )
 
     # then

@@ -1,5 +1,4 @@
 import cerberus
-import markdown
 
 
 SCHEMA = {

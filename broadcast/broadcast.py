@@ -127,7 +127,9 @@ class _Elements:
             func = getattr(elements, attr)
         except AttributeError:
             raise RuntimeError(f'There is no element named "{attr}".')
-        return jinja2.contextfunction(functools.partial(func, self.environment, now=self.now))
+        return jinja2.contextfunction(
+            functools.partial(func, self.environment, now=self.now)
+        )
 
 
 def _render_page(path, context):
