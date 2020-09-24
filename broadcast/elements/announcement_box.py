@@ -8,7 +8,7 @@ SCHEMA = {
 }
 
 
-def announcement_box(environment, context, element_config):
+def announcement_box(environment, context, element_config, now):
     validator = cerberus.Validator(SCHEMA)
     element_config = validator.validated(element_config)
 

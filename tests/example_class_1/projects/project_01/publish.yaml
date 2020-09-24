@@ -1,0 +1,7 @@
+metadata:
+    due: 2020-11-01 23:59:00
+    released: 2020-10-15 23:59:00
+
+artifacts:
+    project.ipynb:
+        recipe: touch project.ipynb

@@ -1,0 +1,9 @@
+schema:
+    required_artifacts:
+        - project.ipynb
+
+    metadata_schema:
+        due:
+            type: datetime
+        released:
+            type: datetime

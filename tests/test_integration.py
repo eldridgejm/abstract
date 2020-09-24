@@ -2,7 +2,7 @@ import pathlib
 import shutil
 import datetime
 import subprocess
-import webbrowser
+import lxml.html
 from textwrap import dedent
 
 import publish
@@ -136,7 +136,7 @@ def test_raises_if_an_unknown_variable_is_accessed_during_page_render(demo):
     with raises(broadcast.PageError) as excinfo:
         broadcast.broadcast(demo.path, demo.builddir)
 
-    assert 'one.md' in str(excinfo.value)
+    assert "one.md" in str(excinfo.value)
 
 
 def test_raises_if_an_unknown_attribute_is_accessed_during_page_render(demo):
@@ -147,35 +147,36 @@ def test_raises_if_an_unknown_attribute_is_accessed_during_page_render(demo):
     with raises(broadcast.PageError) as excinfo:
         broadcast.broadcast(demo.path, demo.builddir)
 
-    assert 'one.md' in str(excinfo.value)
+    assert "one.md" in str(excinfo.value)
 
 
 def test_raises_if_an_unknown_attribute_is_accessed_during_element_render(demo):
     # given
 
     # x is in the element evaluation context, but y is not
-    demo.add_to_config(dedent(
-        """
+    demo.add_to_config(
+        dedent(
+            """
         announcement:
             contents: Here ${ y } is
         """
-        ))
+        )
+    )
     demo.make_page("one.md", "{{ elements.announcement_box(config['announcement']) }}")
 
     # when
     with raises(Exception) as excinfo:
         broadcast.broadcast(demo.path, demo.builddir)
 
-    assert '${ y }' in str(excinfo.value)
-
+    assert "${ y }" in str(excinfo.value)
 
 
 # default theme tests
 # --------------------------------------------------------------------------------------
 
 # here we test the default theme on an example class. The example class has homeworks,
-# labs, lectures, and discussions. 
-#   
+# labs, lectures, and discussions.
+#
 #   - the last lab was released October 15 and is due on October 22
 #   - the last homework was released October 15 and is due on October 22
 #   - the last lecture is on October 22
@@ -205,41 +206,148 @@ def example_class(tempdir, date):
         return date
 
     publish.cli(
-        [str(destination), str(destination / "website/_build/published"),
-            '--skip-directories', 'template'],
+        [
+            str(destination),
+            str(destination / "website/_build/published"),
+            "--skip-directories",
+            "template",
+        ],
         now=now,
     )
 
     return destination
 
 
-@fixture(scope='module')
+def clean_build(builddir):
+    for f in builddir.iterdir():
+        if not f.name == 'published':
+            if f.is_dir():
+                shutil.rmtree(f)
+            else:
+                f.unlink()
+
+
+@fixture(scope="module")
 def publish_on_oct_16(tmp_path_factory):
-    tempdir = tmp_path_factory.mktemp('example')
-    return example_class(tempdir, datetime.datetime(2020, 10, 16, 0, 0, 0))
+    tempdir = tmp_path_factory.mktemp("example_16th")
+    path = example_class(tempdir, datetime.datetime(2020, 10, 16, 0, 0, 0))
+    clean_build(path / 'website' / '_build')
+    return path
 
 
-@fixture(scope='module')
+@fixture(scope="module")
 def publish_on_oct_15(tmp_path_factory):
-    tempdir = tmp_path_factory.mktemp('example')
-    return example_class(tempdir, datetime.datetime(2020, 10, 15, 0, 0, 0))
+    tempdir = tmp_path_factory.mktemp("example_15th")
+    path = example_class(tempdir, datetime.datetime(2020, 10, 15, 0, 0, 0))
+    clean_build(path / 'website' / '_build')
+    return path
+
+@fixture(scope="module")
+def publish_before_quarter(tmp_path_factory):
+    tempdir = tmp_path_factory.mktemp("example_before")
+    path = example_class(tempdir, datetime.datetime(2020, 9, 15, 0, 0, 0))
+    clean_build(path / 'website' / '_build')
+    return path
 
 
 @mark.slow
 def test_fixture(publish_on_oct_15):
     path = publish_on_oct_15
     assert (path / "website" / "theme").exists()
-    assert (path / 'website' / '_build' / "published" / "published.json").exists()
+    assert (path / "website" / "_build" / "published" / "published.json").exists()
 
 
 def test_last_homework_visible(publish_on_oct_15):
     # when
     path = publish_on_oct_15
-    broadcast.broadcast(path / 'website/', path / 'website/_build', path / 'website/_build/published')
+    clean_build(path / 'website' / '_build')
+    broadcast.broadcast(
+        path / "website/", path / "website/_build", path / "website/_build/published",
+        now=lambda: datetime.datetime(2020, 10, 15, 12, 0, 0)
+    )
 
     # then
-    with (path / 'website' / '_build' / 'index.html').open() as fileobj:
+    out = path / "website" / "_build" / "index.html"
+    with out.open() as fileobj:
         contents = fileobj.read()
 
-    assert 'Homework 3' in contents
-    assert 'Thursday' in contents
+    etree = lxml.html.fromstring(contents)
+
+    # select the div containing all homework links
+    xpath = '//div[ h3[ contains(text(), "Homework 3") ] ]'
+    [div] = etree.xpath(xpath)
+
+    # get the link to the homework notebook
+    [a] = div.xpath('.//a[ text() = "Homework Notebook" ]')
+    assert a.values()[0] == 'published/homeworks/03-charts_and_functions/homework.txt'
+
+    # also assert that the due date is displayed
+    [elem] = div.xpath('.//*[ contains(text(), "Due")]')
+    assert 'Oct 22' in elem.text
+
+
+def test_last_homework_solutions_not_posted_on_15th(publish_on_oct_15):
+    # when
+    path = publish_on_oct_15
+    clean_build(path / 'website' / '_build')
+    broadcast.broadcast(
+        path / "website/", path / "website/_build", path / "website/_build/published",
+        now=lambda: datetime.datetime(2020, 10, 15, 12, 0, 0)
+    )
+
+    # then
+    out = path / "website" / "_build" / "index.html"
+    with out.open() as fileobj:
+        contents = fileobj.read()
+
+    etree = lxml.html.fromstring(contents)
+
+    # select the div containing all homework links
+    xpath = '//div[ h3[ contains(text(), "Homework 3") ] ]'
+    [div] = etree.xpath(xpath)
+
+    # get the link to the homework notebook
+    results = div.xpath('.//a[ text() = "Solution Notebook" ]')
+    assert not results
+
+
+def test_homework_2_solutions_posted_on_16th(publish_on_oct_16):
+    # when
+    path = publish_on_oct_16
+    clean_build(path / 'website' / '_build')
+    broadcast.broadcast(
+        path / "website/", path / "website/_build", path / "website/_build/published",
+        now=lambda: datetime.datetime(2020, 10, 16, 12, 0, 0)
+    )
+
+    # then
+    out = path / "website" / "_build" / "index.html"
+    with out.open() as fileobj:
+        contents = fileobj.read()
+
+    etree = lxml.html.fromstring(contents)
+
+    # select the div containing all homework links
+    xpath = '//div[ h3[ contains(text(), "Homework 2") ] ]'
+    [div] = etree.xpath(xpath)
+
+    # get the link to the homework notebook
+    results = div.xpath('.//a[ text() = "Solution Notebook" ]')
+    assert results
+
+
+def test_homework_2_solutions_not_posted_on_15th(publish_on_oct_16):
+    # when
+    path = publish_on_oct_16
+    clean_build(path / 'website' / '_build')
+    broadcast.broadcast(
+        path / "website/", path / "website/_build", path / "website/_build/published",
+        now=lambda: datetime.datetime(2020, 10, 16, 12, 0, 0)
+    )
+
+    # then
+    out = path / "website" / "_build" / "index.html"
+    with out.open() as fileobj:
+        contents = fileobj.read()
+
+    assert "published/homeworks/02-tables/solution.txt" in contents

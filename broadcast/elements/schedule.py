@@ -3,26 +3,50 @@ import datetime
 import cerberus
 import publish
 
+
+RESOURCES_SCHEMA = {
+    "type": "list",
+    "required": True,
+    "schema": {
+        "type": "dict",
+        "schema": {
+            "text": {"type": "string"},
+            "icon": {"type": "string", "nullable": True, "default": None},
+            "requires_artifact": {"type": "string", "nullable": True, "default": None},
+            "text_if_missing": {"type": "string", "nullable": True, "default": None},
+        },
+    },
+}
+
+
 SCHEMA = {
     "week_topics": {"type": "list", "schema": {"type": "string"}},
+    "exams": {
+        "type": "dict",
+        "keysrules": {"type": "string"},
+        "valuesrules": {"type": "date"},
+        "required": False
+    },
+    "week_announcements": {
+        "type": "list",
+        "schema": {
+            "type": "dict",
+            "schema": {
+                "week": {"type": "integer"},
+                "content": {"type": "string"},
+                "urgent": {"type": "boolean", "default": False},
+            },
+        },
+    },
     "first_week_number": {"type": "integer", "default": 1},
     "first_week_start_date": {"type": "date"},
     "lecture": {
         "type": "dict",
         "schema": {
             "collection": {"type": "string"},
-            "date_key": {"type": "string"},
+            "metadata_key_for_released": {"type": "string"},
             "title": {"type": "string"},
-            "resources": {
-                "type": "list",
-                "schema": {
-                    "type": "dict",
-                    "schema": {
-                        "text": {"type": "string"},
-                        "icon": {"type": "string"},
-                    },
-                },
-            },
+            "resources": RESOURCES_SCHEMA,
             "parts": {
                 "type": "dict",
                 "schema": {"key": {"type": "string"}, "text": {"type": "string"}},
@@ -35,20 +59,22 @@ SCHEMA = {
             "type": "dict",
             "schema": {
                 "collection": {"type": "string"},
-                "date_key": {"type": "string"},
-                "due_key": {"type": "string"},
+                "metadata_key_for_released": {"type": "string"},
+                "metadata_key_for_due": {"type": "string", "nullable": True},
                 "title": {"type": "string"},
-                "resources": {
-                    "type": "list",
-                    "schema": {
-                        "type": "dict",
-                        "schema": {
-                            "text": {"type": "string"},
-                            "icon": {"type": "string"},
-                            "on_missing": {"type": "string", "default": None, "nullable": True},
-                        },
-                    },
-                },
+                "resources": RESOURCES_SCHEMA,
+            },
+        },
+    },
+    "discussions": {
+        "type": "list",
+        "schema": {
+            "type": "dict",
+            "schema": {
+                "collection": {"type": "string"},
+                "metadata_key_for_released": {"type": "string"},
+                "title": {"type": "string"},
+                "resources": RESOURCES_SCHEMA,
             },
         },
     },
@@ -73,15 +99,20 @@ def _publication_within_week(start_date, date_key):
 
 
 class Week:
-    def __init__(self, number, start_date, topic):
+    def __init__(self, published, number, start_date, topic):
+        self.published = published
         self.number = number
         self.start_date = start_date
         self.topic = topic
 
-    def filter(self, collection, date_key):
+    def filter(self, collection_key, date_key):
+        collection = self.published.collections[collection_key]
         return publish.filter_nodes(
             collection, _publication_within_week(self.start_date, date_key)
         )
+
+    def contains(self, date):
+        return self.start_date <= date < self.start_date + ONE_WEEK
 
 
 def generate_weeks(element_config, published):
@@ -89,6 +120,7 @@ def generate_weeks(element_config, published):
     for i, topic in enumerate(element_config["week_topics"]):
         number = element_config["first_week_number"] + i
         week = Week(
+            published=published,
             number=element_config["first_week_number"] + i,
             topic=topic,
             start_date=element_config["first_week_start_date"] + i * ONE_WEEK,
@@ -108,18 +140,26 @@ def order_weeks(weeks, today):
     return past + future
 
 
-def schedule(environment, context, element_config):
-    validator = cerberus.Validator(SCHEMA)
+def schedule(environment, context, element_config, now):
+    validator = cerberus.Validator(SCHEMA, require_all=True)
     element_config = validator.validated(element_config)
 
     if element_config is None:
         raise RuntimeError(f"Invalid config: {validator.errors}")
 
     weeks = generate_weeks(element_config, context["published"])
-    weeks = order_weeks(weeks, datetime.date.today() + 3*ONE_WEEK)
+    weeks = order_weeks(weeks, now().date())
+
+    try:
+        [this_week] = [w for w in weeks if w.contains(now().date())]
+    except ValueError:
+        this_week = None
 
     template = environment.get_template("schedule.html")
     return template.render(
-        element_config=element_config, published=context["published"], weeks=weeks,
-        now=datetime.datetime.now() + 3*ONE_WEEK
+        element_config=element_config,
+        published=context["published"],
+        weeks=weeks,
+        this_week=this_week,
+        now=now(),
     )

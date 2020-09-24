@@ -17,7 +17,7 @@ SCHEMA = {
 }
 
 
-def button_bar(templates, published, config):
+def button_bar(templates, published, config, now):
     validator = cerberus.Validator(SCHEMA)
     config_as_dict = {"*": config}
     config = validator.validated(config_as_dict)

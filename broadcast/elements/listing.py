@@ -20,7 +20,7 @@ SCHEMA = {
 }
 
 
-def listing(environment, context, element_config):
+def listing(environment, context, element_config, now):
     validator = cerberus.Validator(SCHEMA, require_all=True)
     element_config = validator.validated(element_config)
 

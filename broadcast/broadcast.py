@@ -1,5 +1,6 @@
 """Generate a static site with broadcast.broadcast"""
 import argparse
+import datetime
 import pathlib
 import functools
 import shutil
@@ -117,15 +118,16 @@ class _Elements:
 
     """
 
-    def __init__(self, environment):
+    def __init__(self, environment, now):
         self.environment = environment
+        self.now = now
 
     def __getattr__(self, attr):
         try:
             func = getattr(elements, attr)
         except AttributeError:
             raise RuntimeError(f'There is no element named "{attr}".')
-        return jinja2.contextfunction(functools.partial(func, self.environment))
+        return jinja2.contextfunction(functools.partial(func, self.environment, now=self.now))
 
 
 def _render_page(path, context):
@@ -255,7 +257,7 @@ def _create_base_template_environment(input_path):
     )
 
 
-def broadcast(input_path, output_path, published_path=None):
+def broadcast(input_path, output_path, published_path=None, now=datetime.datetime.now):
     input_path = pathlib.Path(input_path)
     output_path = pathlib.Path(output_path)
     if published_path is not None:
@@ -282,7 +284,7 @@ def broadcast(input_path, output_path, published_path=None):
 
     # construct the context used during page rendering
     context = {
-        "elements": _Elements(environment=element_environment),
+        "elements": _Elements(environment=element_environment, now=now),
         "config": config,
         "published": published,
     }

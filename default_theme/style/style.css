@@ -23,7 +23,6 @@ div.schedule-week {
 }
 
 div.schedule-week-future {
-    opacity: 0.1;
 }
 
 div.schedule-week-title {
@@ -52,14 +51,14 @@ div.schedule-lecture.last {
     margin-bottom: 0em;
 }
 
-ul li.schedule-lecture-resource {
+ul li.schedule-resource {
     font-size: 10pt;
     margin-left: -3em;
     margin-bottom: .4em;
     list-style-type: none;
 }
 
-i.schedule-resource-icon {
+i.schedule-icon {
     margin-right: .7em;
 }
 
@@ -87,7 +86,7 @@ ol.schedule-lecture-parts li:before {
 }
 
 
-ul li.schedule-assignment-resource {
+ul li.schedule-resource {
     font-size: 10pt;
     margin-left: -3em;
     margin-bottom: .4em;
@@ -98,3 +97,32 @@ i.schedule-assignment-icon {
     margin-right: .7em;
 }
 
+
+div.schedule-announcement {
+    margin-top: -1em;
+    margin-bottom: 2em;
+}
+
+
+div.schedule-past-or-future {
+    font-size: 16pt;
+    margin-bottom: 4em;
+}
+
+.schedule-separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #c0c0c0;
+}
+.schedule-separator::before, .schedule-separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #ddd;
+}
+.schedule-separator::before {
+    margin-right: .25em;
+}
+.schedule-separator::after {
+    margin-left: .25em;
+}
