@@ -1,6 +1,8 @@
 body {
     padding-top: 5em;
-    font-size: 14pt;
+    font-size: 13pt;
+    text-align: justify;
+    text-justify: inter-word;
 
 }
 
@@ -78,7 +80,7 @@ ol.schedule-lecture-parts {
 ol.schedule-lecture-parts li {
     counter-increment: part-counter;
     font-size: 14pt;
-    margin-left: -.5em;
+    margin-left: -.1em;
     margin-bottom: .4em;
     position: relative;
 }

@@ -10,22 +10,22 @@ buttons:
         - text: Syllabus
           subtext: FAQ, etc.
           url: ./syllabus.html
-          icon: em-blue_book
+          icon: em-scroll
 
         - text: Office Hours
           subtext: Calendar
           url: ./office_hours.html
-          icon: em-hourglass_flowing_sand
+          icon: em-male-teacher
 
         - text: Campuswire
           subtext: Message Board
           url: www.campuswire.com
-          icon: em-mega
+          icon: em-left_speech_bubble
 
         - text: Gradescope
           subtext: Gradebook
           url: www.gradescope.com
-          icon: em-bar_chart
+          icon: em-100
 
     bottom:
         - text: Textbook
@@ -36,7 +36,7 @@ buttons:
         - text: All Resources
           subtext: Calendar
           url: ./resources.html
-          icon: em-hourglass_flowing_sand
+          icon: em-books
 
 
 schedule:
@@ -98,7 +98,7 @@ schedule:
             - 
               # the 
               text: "<a href=${ publication.artifacts['lecture.ipynb'].path }>Lecture Notebook</a>"
-              icon: em-notebook
+              icon: em-spiral_note_pad
 
             - text: 'Reading: <a href="http://diveintods.com">Dive into Data Science</a>'
               icon: em-book
@@ -159,6 +159,6 @@ schedule:
 
             resources:
                 - text: <a href="${ publication.artifacts['discussion.ipynb'].path }">Discussion Notebook</a>
-                  icon: em-notebook
+                  icon: em-spiral_note_pad
                   requires:
                       artifact: discussion.ipynb
