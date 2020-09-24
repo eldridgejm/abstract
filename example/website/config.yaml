@@ -2,13 +2,44 @@ theme:
     page_title: "DSC 10"
 
 
-buttons: !include buttons.yaml
 listings: !include listings.yaml
 
 
-# the schedule that appears on the front page
-schedule:
+buttons:
+    top:
+        - text: Syllabus
+          subtext: FAQ, etc.
+          url: ./syllabus.html
+          icon: em-blue_book
 
+        - text: Office Hours
+          subtext: Calendar
+          url: ./office_hours.html
+          icon: em-hourglass_flowing_sand
+
+        - text: Campuswire
+          subtext: Message Board
+          url: www.campuswire.com
+          icon: em-mega
+
+        - text: Gradescope
+          subtext: Gradebook
+          url: www.gradescope.com
+          icon: em-bar_chart
+
+    bottom:
+        - text: Textbook
+          subtext: Dive into Data Science
+          url: http://diveintods.com
+          icon: em-blue_book
+
+        - text: All Resources
+          subtext: Calendar
+          url: ./resources.html
+          icon: em-hourglass_flowing_sand
+
+
+schedule:
     # what should the first week be numbered?
     first_week_number: 0
 
@@ -39,10 +70,16 @@ schedule:
     week_announcements:
         - week: 0
           content: |
-              #### Announcements
+              ### Welcome to DSC 10
+
+              Here's how to get started:
+
+              - read the [syllabus](./syllabus.html)
+              - join our [campuswire](http://campuswire.com) with access code 231234
+              - join our [gradescope](http://gradescope.com) with access code 901281
+
+              See you in lecture.
               
-              - There is no homework this week.
-              - The exam is next week.
 
     lecture:
         
@@ -77,7 +114,8 @@ schedule:
           title: "Project"
           resources:
               - text: "Notebook"
-                requires_artifact: project.ipynb
+                requires:
+                    artifact: project.ipynb
 
         # homeworks
         - 
@@ -100,15 +138,17 @@ schedule:
               # homework notebooks
               - text: "<a href=${ publication.artifacts['homework.txt'].path }>Homework Notebook</a>"
                 icon: em-question
-                requires_artifact: homework.txt
-                text_if_missing: Not released yet...
+                requires:
+                    artifact: homework.txt
+                    text_if_missing: Not released yet...
 
               # solution notebooks
               - text: "<a href=${ publication.artifacts['solution.txt'].path }>Solution Notebook</a>"
                 icon: em-mag
                 #
                 # do not display this resource if the following artifact doesn't exist
-                requires_artifact: solution.txt
+                requires:
+                    artifact: solution.txt
 
     discussions:
 
@@ -120,4 +160,5 @@ schedule:
             resources:
                 - text: <a href="${ publication.artifacts['discussion.ipynb'].path }">Discussion Notebook</a>
                   icon: em-notebook
-                  requires_artifact: discussion.ipynb
+                  requires:
+                      artifact: discussion.ipynb

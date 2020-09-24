@@ -4,6 +4,9 @@
     </div>
 </div>
 
+<div style="margin-top: 3em; margin-bottom: 3em; padding: 0em">
 {{ elements.button_bar(config['buttons']['top']) }}
+{{ elements.button_bar(config['buttons']['bottom']) }}
+</div>
 
 {{ elements.schedule(config['schedule']) }}

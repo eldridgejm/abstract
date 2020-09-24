@@ -6,30 +6,23 @@
                 <th scope="col">#</th>
             {% endif %}
             {% for column in element_config['columns'] %}
-            <th scope="col">{{ column['name'] }}</th>
+            <th scope="col">{{ column['heading'] }}</th>
             {% endfor %}
             </tr>
         </thead>
 
         <tbody>
             {% for publication in publications %}
-            {% set metadata = publication.metadata %}
-            {% set artifacts = publication.artifacts %}
             <tr>
                 {% if element_config['numbered'] %}
                 <th scope="row"> {{ loop.index }}</th>
                 {% endif %}
                 {% for column in element_config['columns'] %}
                 <td>
-                    {% if column['url'] is not none %}
-                    {% set url = column['url'] | evaluate(metadata=metadata, artifacts=artifacts) %}
-                    {% if url is none %}
-                    <span class="text-muted">{{ column['on_missing_url'] | evaluate(metadata=metadata, artifacts=artifacts) }}</span>
+                    {% if (column['requires'] is not none) and (publication.artifacts[column['requires']['artifact']].path is none) %}
+                        {{ column['requires']['cell_content_if_missing'] | evaluate(publication=publication) }}
                     {% else %}
-                    <a href="{{ url }}">{{ column['content'] | evaluate(metadata=metadata, artifacts=artifacts) }}</a>
-                    {% endif %}
-                    {% else %}
-                    {{ column['content'] | evaluate(metadata=metadata, artifacts=artifacts) }}
+                        {{ column['cell_content'] | evaluate(publication=publication) }}
                     {% endif %}
                 </td>
                 {% endfor %}

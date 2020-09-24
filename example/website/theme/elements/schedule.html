@@ -1,8 +1,8 @@
 {% macro display_resource(resource_config, publication) %}
 
-    {% if resource_config['requires_artifact'] is not none %}
-        {% set is_missing = publication.artifacts[resource_config['requires_artifact']].path is none %}
-        {% set text_if_missing = resource_config['text_if_missing'] %}
+    {% if resource_config['requires'] is not none %}
+        {% set is_missing = publication.artifacts[resource_config['requires']['artifact']].path is none %}
+        {% set text_if_missing = resource_config['requires']['text_if_missing'] %}
         {% set skip = is_missing and (text_if_missing is none) %}
     {% else %}
         {% set is_missing = false %}

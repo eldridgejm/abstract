@@ -2,29 +2,41 @@ homework:
     collection: homeworks
     numbered: true
     columns:
-        - name: Problems
-          content: "Homework ${ metadata.number }"
-          url: "${ artifacts['homework.txt'].path }"
+        - heading: Problems
+          cell_content: |
+              <a href="${ publication.artifacts['homework.txt'].path }">
+              Homework ${ publication.metadata.number }
+              </a>
 
-        - name: Solutions
-          content: Solution
-          url: "${ artifacts['solution.txt'].path }"
-          on_missing_url: "not yet posted"
+          requires:
+              artifact: homework.txt
+              cell_content_if_missing: Not yet released...
 
-        - name: Due
-          content: "${ metadata.due.strftime('%A, %b %d at %H:%M:%S') }"
+        - heading: Solutions
+          cell_content: |
+              <a href="${ publication.artifacts['solution.txt'].path }">
+              Solution
+              </a>
+          requires:
+              artifact: solution.txt
+              cell_content_if_missing: Not yet released...
+
+        - heading: Due
+          cell_content: "${ publication.metadata.due.strftime('%A, %b %d at %H:%M:%S') }"
 
 
 lecture_notebooks:
     collection: lectures
     numbered: true
     columns:
-        - name: Blank Notebook
-          content: "Lecture ${ metadata.number } &mdash; ${ metadata.topic }"
-          url: "${ artifacts['lecture.ipynb'].path }"
-        - name: Filled Notebook
-          content: "Filled Notebook"
-          url: "${ artifacts['lecture.ipynb'].path }"
+        - heading: Blank Notebook
+          cell_content: |
+              <a href="${ publication.artifacts['lecture.ipynb'].path }">
+              Lecture ${ publication.metadata.number } &mdash; ${ publication.metadata.topic }
+              </a>
+          requires:
+              artifact: lecture.ipynb
+              cell_content_if_missing: Not yet posted...
 
-        - name: Date
-          content: "${ metadata.date.strftime('%A, %b %d') }"
+        - heading: Date
+          cell_content: "${ publication.metadata.date.strftime('%A, %b %d') }"

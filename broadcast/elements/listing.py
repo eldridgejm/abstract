@@ -9,10 +9,17 @@ SCHEMA = {
         "schema": {
             "type": "dict",
             "schema": {
-                "content": {"type": "string"},
-                "name": {"type": "string"},
-                "url": {"type": "string", "default": None, "nullable": True},
-                "on_missing_url": {"type": "string", "default": None, "nullable": True},
+                "cell_content": {"type": "string"},
+                "heading": {"type": "string"},
+                "requires": {
+                    "type": "dict",
+                    "schema": {
+                        "artifact": {"type": "string"},
+                        "cell_content_if_missing": {"type": "string"}
+                    },
+                    "default": None,
+                    "nullable": True,
+                }
             },
         },
     },
