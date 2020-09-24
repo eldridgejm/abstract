@@ -1,9 +1,0 @@
-{% if element_config['urgent'] %}
-    {% set class = "alert-danger" %}
-{% else %}
-    {% set class = "alert-primary" %}
-{% endif %}
-
-<div class="alert {{ class }}">
-    <p>{{ element_config['contents'] | evaluate | markdown_to_html }}</p>
-</div>

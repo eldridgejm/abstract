@@ -1,32 +1,8 @@
 theme:
-    page_title: "{{ course.name }} &mdash; {{ course.quarter }}"
-
-quote_of_the_day: 
-    quote: "The simple is the seal of the true."
-    author: Albert Einsteins
-
-# the announcement box on the front page
-announcement:
-
-    # what goes in the box. can be markdown or HTML. if Null, no box is
-    # displayed
-    contents: |
-        ### Welcome to DSC 40B in Fall 2020
-
-        Here's a checklist to get you started:
-
-        - join [Campuswire](http://campuswire.com) with code {{ course.campuswire_code }}
-        - join [Gradescope](http://gradescope.com) with code {{ course.gradescope_code }}
-        - read the [syllabus](./syllabus.html)
-
-        What about publications???
-
-    # if True, the box will be red
-    urgent: false
+    page_title: "DSC 10"
 
 
 buttons: !include buttons.yaml
-
 listings: !include listings.yaml
 
 

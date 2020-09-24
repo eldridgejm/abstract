@@ -23,15 +23,11 @@ import broadcast
 
 
 EXAMPLE_CLASS = pathlib.Path(__file__).parent / "../example"
-DEFAULT_THEME = pathlib.Path(__file__).parent / "../example/theme"
-
-DATETIME = datetime.datetime(2020, 10, 10, 23, 0, 0)
 
 
 def example_class(tempdir, date):
     destination = tempdir / "example_class"
     shutil.copytree(EXAMPLE_CLASS, destination)
-    shutil.copytree(DEFAULT_THEME, destination / "website" / "theme")
 
     builddir = destination / "website" / "_build"
     if builddir.exists():

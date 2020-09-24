@@ -256,6 +256,7 @@ def _create_base_template_environment(input_path):
     """Create the base template environment."""
     return jinja2.Environment(
         loader=jinja2.FileSystemLoader(input_path / "theme" / "base_templates"),
+        undefined=jinja2.StrictUndefined
     )
 
 
@@ -302,12 +303,21 @@ def broadcast(input_path, output_path, published_path=None, now=datetime.datetim
 
     # copy static files
     shutil.copytree(input_path / "theme" / "style", output_path / "style")
+    shutil.copytree(input_path / "static", output_path / "static")
 
 
 def cli():
     parser = argparse.ArgumentParser()
     parser.add_argument("output_path")
-    parser.add_argument("--published_path")
+    parser.add_argument("--published")
+    parser.add_argument("--now")
     args = parser.parse_args()
 
-    broadcast(pathlib.Path.cwd(), args.output_path, args.published_path)
+    if args.now is not None:
+        as_date = datetime.datetime.fromisoformat(args.now)
+        def now():
+            return as_date
+    else:
+        return datetime.datetime.now
+
+    broadcast(pathlib.Path.cwd(), args.output_path, args.published, now=now)
