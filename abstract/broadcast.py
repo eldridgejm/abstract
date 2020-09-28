@@ -1,4 +1,4 @@
-"""Generate a static site with broadcast.broadcast"""
+"""Generate a static site with abstract.abstract"""
 import argparse
 import datetime
 import pathlib
@@ -110,7 +110,7 @@ def load_config(path):
 class _Elements:
     """A class to create closures for page elements.
 
-    Used in broadcast(). We instantiate _Elements with a universe and a
+    Used in abstract(). We instantiate _Elements with a universe and a
     template loader. When an attribute of the instance is accessed, the element
     with that name will be pulled in from the elements module and its
     "templates" and "published" arguments will be closed over. The result is a
@@ -260,7 +260,7 @@ def _create_base_template_environment(input_path):
     )
 
 
-def broadcast(input_path, output_path, published_path=None, now=datetime.datetime.now):
+def abstract(input_path, output_path, published_path=None, now=datetime.datetime.now):
     input_path = pathlib.Path(input_path)
     output_path = pathlib.Path(output_path)
     if published_path is not None:
@@ -320,4 +320,4 @@ def cli():
     else:
         return datetime.datetime.now
 
-    broadcast(pathlib.Path.cwd(), args.output_path, args.published, now=now)
+    abstract(pathlib.Path.cwd(), args.output_path, args.published, now=now)

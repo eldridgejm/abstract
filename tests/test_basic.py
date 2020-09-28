@@ -8,7 +8,7 @@ import publish
 
 from pytest import raises, fixture, mark
 
-import broadcast
+import abstract
 
 
 # basic tests
@@ -73,7 +73,7 @@ def test_converts_pages_from_markdown_to_html(demo):
     demo.make_page("one.md", "# This is a header\n**this is bold!**")
 
     # when
-    broadcast.broadcast(demo.path, demo.builddir)
+    abstract.abstract(demo.path, demo.builddir)
 
     # then
     assert "<h1>This is a header</h1>" in demo.get_output("one.html")
@@ -90,7 +90,7 @@ def test_pages_have_access_to_published_artifacts(demo):
     demo.use_example_published("basic_published")
 
     # when
-    broadcast.broadcast(
+    abstract.abstract(
         demo.path, demo.builddir, published_path=demo.builddir / "published"
     )
 
@@ -111,7 +111,7 @@ def test_pages_have_access_to_elements(demo):
     demo.add_to_config(config)
 
     # when
-    broadcast.broadcast(demo.path, demo.builddir)
+    abstract.abstract(demo.path, demo.builddir)
 
     # then
     assert "This is a test" in demo.get_output("one.html")
@@ -122,7 +122,7 @@ def test_pages_are_rendered_in_base_template(demo):
     demo.make_page("one.md", "this is the page")
 
     # when
-    broadcast.broadcast(demo.path, demo.builddir)
+    abstract.abstract(demo.path, demo.builddir)
 
     # then
     assert "<html>" in demo.get_output("one.html")
@@ -133,8 +133,8 @@ def test_raises_if_an_unknown_variable_is_accessed_during_page_render(demo):
     demo.make_page("one.md", "{{ foo }}")
 
     # when
-    with raises(broadcast.PageError) as excinfo:
-        broadcast.broadcast(demo.path, demo.builddir)
+    with raises(abstract.PageError) as excinfo:
+        abstract.abstract(demo.path, demo.builddir)
 
     assert "one.md" in str(excinfo.value)
 
@@ -144,8 +144,8 @@ def test_raises_if_an_unknown_attribute_is_accessed_during_page_render(demo):
     demo.make_page("one.md", "{{ config.this_dont_exist }}")
 
     # when
-    with raises(broadcast.PageError) as excinfo:
-        broadcast.broadcast(demo.path, demo.builddir)
+    with raises(abstract.PageError) as excinfo:
+        abstract.abstract(demo.path, demo.builddir)
 
     assert "one.md" in str(excinfo.value)
 
@@ -166,6 +166,6 @@ def test_raises_if_an_unknown_attribute_is_accessed_during_element_render(demo):
 
     # when
     with raises(Exception) as excinfo:
-        broadcast.broadcast(demo.path, demo.builddir)
+        abstract.abstract(demo.path, demo.builddir)
 
     assert "${ y }" in str(excinfo.value)

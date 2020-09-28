@@ -14,7 +14,7 @@ let
   };
 in
   python37Packages.buildPythonApplication {
-    name = "broadcast";
+    name = "abstract";
     src = ./.;
 
     # needed at runtime

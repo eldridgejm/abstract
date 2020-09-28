@@ -3,7 +3,7 @@ import pathlib
 
 from pytest import fixture
 
-import broadcast
+import abstract
 
 
 @fixture
@@ -49,7 +49,7 @@ def test_load_config(write_file):
     write_file("bar.yaml", bar_yaml)
 
     # when
-    config = broadcast.load_config(path)
+    config = abstract.load_config(path)
 
     # then
     assert config["foo"]["x"] == 1

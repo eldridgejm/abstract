@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = "broadcast"
+project = "abstract"
 copyright = "2020, Justin Eldridge"
 author = "Justin Eldridge"
 

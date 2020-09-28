@@ -6,7 +6,7 @@ import lxml.html
 import publish
 from pytest import fixture, mark
 
-import broadcast
+import abstract
 
 # default theme tests
 # --------------------------------------------------------------------------------------
@@ -95,7 +95,7 @@ def test_last_homework_visible(publish_on_oct_15):
     # when
     path = publish_on_oct_15
     clean_build(path / "website" / "_build")
-    broadcast.broadcast(
+    abstract.abstract(
         path / "website/",
         path / "website/_build",
         path / "website/_build/published",
@@ -126,7 +126,7 @@ def test_last_homework_solutions_not_posted_on_15th(publish_on_oct_15):
     # when
     path = publish_on_oct_15
     clean_build(path / "website" / "_build")
-    broadcast.broadcast(
+    abstract.abstract(
         path / "website/",
         path / "website/_build",
         path / "website/_build/published",
@@ -153,7 +153,7 @@ def test_homework_2_solutions_posted_on_16th(publish_on_oct_16):
     # when
     path = publish_on_oct_16
     clean_build(path / "website" / "_build")
-    broadcast.broadcast(
+    abstract.abstract(
         path / "website/",
         path / "website/_build",
         path / "website/_build/published",
@@ -180,7 +180,7 @@ def test_homework_2_solutions_not_posted_on_15th(publish_on_oct_16):
     # when
     path = publish_on_oct_16
     clean_build(path / "website" / "_build")
-    broadcast.broadcast(
+    abstract.abstract(
         path / "website/",
         path / "website/_build",
         path / "website/_build/published",
