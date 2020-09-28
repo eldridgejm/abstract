@@ -99,7 +99,7 @@ def test_last_homework_visible(publish_on_oct_15):
         path / "website/",
         path / "website/_build",
         path / "website/_build/published",
-        context={'course': {'name': 'DSC 10'}},
+        context={"course": {"name": "DSC 10"}},
         now=lambda: datetime.datetime(2020, 10, 15, 12, 0, 0),
     )
 
@@ -131,7 +131,7 @@ def test_last_homework_solutions_not_posted_on_15th(publish_on_oct_15):
         path / "website/",
         path / "website/_build",
         path / "website/_build/published",
-        context={'course': {'name': 'DSC 10'}},
+        context={"course": {"name": "DSC 10"}},
         now=lambda: datetime.datetime(2020, 10, 15, 12, 0, 0),
     )
 
@@ -159,7 +159,7 @@ def test_homework_2_solutions_posted_on_16th(publish_on_oct_16):
         path / "website/",
         path / "website/_build",
         path / "website/_build/published",
-        context={'course': {'name': 'DSC 10'}},
+        context={"course": {"name": "DSC 10"}},
         now=lambda: datetime.datetime(2020, 10, 16, 12, 0, 0),
     )
 
@@ -187,7 +187,7 @@ def test_homework_2_solutions_not_posted_on_15th(publish_on_oct_16):
         path / "website/",
         path / "website/_build",
         path / "website/_build/published",
-        context={'course': {'name': 'DSC 10'}},
+        context={"course": {"name": "DSC 10"}},
         now=lambda: datetime.datetime(2020, 10, 16, 12, 0, 0),
     )
 

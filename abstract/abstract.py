@@ -96,7 +96,7 @@ def load_config(path, context=None):
     if context is None:
         context = {}
 
-    variables = {'context': context}
+    variables = {"context": context}
 
     # perform template interpolation
     with path.open() as fileobj:
@@ -330,7 +330,7 @@ def cli():
     parser.add_argument("output_path")
     parser.add_argument("--published")
     parser.add_argument("--now")
-    parser.add_argument('--context', type=pathlib.Path)
+    parser.add_argument("--context", type=pathlib.Path)
     args = parser.parse_args()
 
     context = {}
@@ -347,4 +347,6 @@ def cli():
     else:
         return datetime.datetime.now
 
-    abstract(pathlib.Path.cwd(), args.output_path, args.published, context=context, now=now)
+    abstract(
+        pathlib.Path.cwd(), args.output_path, args.published, context=context, now=now
+    )

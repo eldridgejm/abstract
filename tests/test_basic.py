@@ -156,7 +156,7 @@ def test_raises_if_an_unknown_attribute_is_accessed_during_element_render(demo):
     # x is in the element evaluation context, but y is not
     demo.add_to_config(
         dedent(
-        """
+            """
         announcement:
             contents: Here ${ y } is
         """
@@ -185,18 +185,17 @@ def test_accepts_context(demo):
 def test_context_available_in_config_file(demo):
     # given
     demo.add_to_config(
-            dedent(
-                """
+        dedent(
+            """
                 announcement:
                     contents: My name is {{ context.name }}
                 """
-            )
+        )
     )
     demo.make_page("one.md", "{{ elements.announcement_box(config['announcement']) }}")
 
     # when
-    abstract.abstract(demo.path, demo.builddir, context={'name': 'Zaphod Beeblebrox'})
+    abstract.abstract(demo.path, demo.builddir, context={"name": "Zaphod Beeblebrox"})
 
     # then
-    assert 'Zaphod Beeblebrox' in demo.get_output('one.html')
-                    
+    assert "Zaphod Beeblebrox" in demo.get_output("one.html")
