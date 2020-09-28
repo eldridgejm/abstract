@@ -1,6 +1,6 @@
 body {
     padding-top: 5em;
-    font-size: 13pt;
+    font-size: 12pt;
     text-align: justify;
     text-justify: inter-word;
 
@@ -47,12 +47,12 @@ div.schedule-week-title {
 
 h1.schedule-week-title-number {
     font-weight: bold;
-    font-size: 36pt;
+    font-size: 32pt;
 }
 
 h2.schedule-week-title-topic {
     font-weight: bold;
-    font-size: 28pt;
+    font-size: 24pt;
 }
 
 h3.schedule-week-component-title {
@@ -79,7 +79,7 @@ ol.schedule-lecture-parts {
 
 ol.schedule-lecture-parts li {
     counter-increment: part-counter;
-    font-size: 14pt;
+    font-size: 12pt;
     margin-left: -.1em;
     margin-bottom: .4em;
     position: relative;
