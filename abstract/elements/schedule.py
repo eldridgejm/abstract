@@ -15,11 +15,15 @@ RESOURCES_SCHEMA = {
                 "type": "dict",
                 "schema": {
                     "artifact": {"type": "string"},
-                    "text_if_missing": {"type": "string", "nullable": True, "default": None}
+                    "text_if_missing": {
+                        "type": "string",
+                        "nullable": True,
+                        "default": None,
+                    },
                 },
                 "default": None,
                 "nullable": True,
-            }
+            },
         },
     },
 }

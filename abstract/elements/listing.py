@@ -15,11 +15,11 @@ SCHEMA = {
                     "type": "dict",
                     "schema": {
                         "artifact": {"type": "string"},
-                        "cell_content_if_missing": {"type": "string"}
+                        "cell_content_if_missing": {"type": "string"},
                     },
                     "default": None,
                     "nullable": True,
-                }
+                },
             },
         },
     },

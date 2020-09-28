@@ -9,4 +9,6 @@
 {{ elements.button_bar(config['buttons']['bottom']) }}
 </div>
 
+Welcome to {{ context.course.name }}.
+
 {{ elements.schedule(config['schedule']) }}
