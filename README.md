@@ -9,3 +9,5 @@ your course materials and when they should be released. Always forget to publish
 solutions? They're built and posted automatically the day after the homework is due (or
 whenever you specify). Fixed a typo in the lecture slides? The new version is uploaded
 automatically.
+
+*abstract* is in development and undocumented. Things are subject to change.
