@@ -91,7 +91,7 @@ def test_fixture(publish_on_oct_15):
     assert (path / "website" / "_build" / "published" / "published.json").exists()
 
 
-def test_last_homework_visible(publish_on_oct_15):
+def test_second_homework_visible(publish_on_oct_15):
     # when
     path = publish_on_oct_15
     clean_build(path / "website" / "_build")
@@ -101,6 +101,38 @@ def test_last_homework_visible(publish_on_oct_15):
         path / "website/_build/published",
         context={"course": {"name": "DSC 10"}},
         now=lambda: datetime.datetime(2020, 10, 15, 12, 0, 0),
+    )
+
+    # then
+    out = path / "website" / "_build" / "index.html"
+    with out.open() as fileobj:
+        contents = fileobj.read()
+
+    etree = lxml.html.fromstring(contents)
+
+    # select the div containing all homework links
+    xpath = '//div[ h3[ contains(text(), "Homework 2") ] ]'
+    [div] = etree.xpath(xpath)
+
+    # get the link to the homework notebook
+    [a] = div.xpath('.//a[ text() = "Homework Notebook" ]')
+    assert a.values()[0] == "published/homeworks/02-tables/homework.txt"
+
+    # also assert that the due date is displayed
+    [elem] = div.xpath('.//*[ contains(text(), "Was due")]')
+    assert "Oct 14" in elem.text
+
+
+def test_third_homework_visible_on_16th(publish_on_oct_16):
+    # when
+    path = publish_on_oct_16
+    clean_build(path / "website" / "_build")
+    abstract.abstract(
+        path / "website/",
+        path / "website/_build",
+        path / "website/_build/published",
+        context={"course": {"name": "DSC 10"}},
+        now=lambda: datetime.datetime(2020, 10, 16, 12, 0, 0),
     )
 
     # then
@@ -123,7 +155,8 @@ def test_last_homework_visible(publish_on_oct_15):
     assert "Oct 22" in elem.text
 
 
-def test_last_homework_solutions_not_posted_on_15th(publish_on_oct_15):
+
+def test_third_homework_solutions_not_posted_on_15th(publish_on_oct_15):
     # when
     path = publish_on_oct_15
     clean_build(path / "website" / "_build")
