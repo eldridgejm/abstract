@@ -345,7 +345,7 @@ def cli():
             return as_date
 
     else:
-        return datetime.datetime.now
+        now = datetime.datetime.now
 
     abstract(
         pathlib.Path.cwd(), args.output_path, args.published, context=context, now=now

@@ -2,7 +2,7 @@
 website: clean
 	mkdir _build
 	publish .. _build/published --skip-directories template
-	abstract _build --published _build/published --now 2020-10-07 --context ../course.yaml
+	abstract _build --published _build/published --context ../course.yaml
 
 .PHONY: clean
 clean:
