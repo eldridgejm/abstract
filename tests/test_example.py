@@ -155,7 +155,6 @@ def test_third_homework_visible_on_16th(publish_on_oct_16):
     assert "Oct 22" in elem.text
 
 
-
 def test_third_homework_solutions_not_posted_on_15th(publish_on_oct_15):
     # when
     path = publish_on_oct_15
