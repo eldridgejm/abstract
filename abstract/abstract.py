@@ -339,15 +339,10 @@ def cli():
             context[args.context.stem] = yaml.load(fileobj, Loader=yaml.Loader)
 
     if args.now is not None:
-        # if a number is provided, use it as an offset
-        try:
-            n_days = int(args.now)
-            _now = datetime.datetime.now() + datetime.timedelta(days=n_days)
-        except ValueError:
-            _now = datetime.datetime.fromisoformat(args.now)
+        as_date = datetime.datetime.fromisoformat(args.now)
 
         def now():
-            return _now
+            return as_date
 
     else:
         now = datetime.datetime.now
