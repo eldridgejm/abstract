@@ -35,17 +35,15 @@ def example_class(tempdir, date):
 
     builddir.mkdir()
 
-    def now():
-        return date
-
     publish.cli(
         [
             str(destination),
             str(destination / "website/_build/published"),
             "--skip-directories",
             "template",
+            "--now",
+            date.isoformat()
         ],
-        now=now,
     )
 
     return destination
