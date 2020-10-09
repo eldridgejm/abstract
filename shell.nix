@@ -8,8 +8,8 @@ let
     src = fetchFromGitHub {
       owner = "eldridgejm";
       repo = "publish";
-      rev = "cb1418eda7141333b628614f9207ffefb8e17af7";
-      sha256 = "1gzqxbsxqd1vzab3sbkvm09m8m42xwnhv9q4h0g7aphvymnf7ad9";
+      rev = "c032605229fcb7be814f9fbbd5d51b3ec1aba246";
+      sha256 = "10q2rb7k36f6cn2djajdsw72gpwq1scw8vggaqs2qd35qlxx8mjy";
     };
   };
 in
