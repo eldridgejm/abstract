@@ -1,3 +1,16 @@
+{% macro display_cell(publication, column) %}
+    {% set is_missing = false %}
+    {% if column['requires'] is not none %}
+        {% set is_missing = is_something_missing(publication, column['requires']) %}
+    {% endif %}
+
+    {% if is_missing %}
+        {{ column['requires']['cell_content_if_missing'] | evaluate(publication=publication) }}
+    {% else %}
+        {{ column['cell_content'] | evaluate(publication=publication) }}
+    {% endif %}
+{% endmacro %}
+
 <div class="listing">
     <table class="table">
         <thead>
@@ -19,11 +32,7 @@
                 {% endif %}
                 {% for column in element_config['columns'] %}
                 <td>
-                    {% if (column['requires'] is not none) and (publication.artifacts[column['requires']['artifact']].path is none) %}
-                        {{ column['requires']['cell_content_if_missing'] | evaluate(publication=publication) }}
-                    {% else %}
-                        {{ column['cell_content'] | evaluate(publication=publication) }}
-                    {% endif %}
+                    {{ display_cell(publication, column) }}
                 </td>
                 {% endfor %}
             </tr>

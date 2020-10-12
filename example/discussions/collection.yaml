@@ -9,3 +9,6 @@ schema:
             type: date
         number:
             type: integer
+        recording:
+            type: string
+            required: false

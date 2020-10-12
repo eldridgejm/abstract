@@ -2,6 +2,8 @@ import datetime
 import cerberus
 import publish
 
+from ._common import is_something_missing
+
 
 RESOURCES_SCHEMA = {
     "type": "list",
@@ -14,7 +16,16 @@ RESOURCES_SCHEMA = {
             "requires": {
                 "type": "dict",
                 "schema": {
-                    "artifact": {"type": "string"},
+                    "artifacts": {
+                        "type": "list",
+                        "schema": {"type": "string"},
+                        "default": [],
+                    },
+                    "metadata": {
+                        "type": "list",
+                        "schema": {"type": "string"},
+                        "default": [],
+                    },
                     "text_if_missing": {
                         "type": "string",
                         "nullable": True,
@@ -109,14 +120,12 @@ def _publication_within_week(start_date, date_key):
 
 
 class Week:
-    def __init__(self, published, number, start_date, topic):
-        self.published = published
+    def __init__(self, number, start_date, topic):
         self.number = number
         self.start_date = start_date
         self.topic = topic
 
-    def filter(self, collection_key, date_key):
-        collection = self.published.collections[collection_key]
+    def filter(self, collection, date_key):
         return publish.filter_nodes(
             collection, _publication_within_week(self.start_date, date_key)
         )
@@ -129,7 +138,6 @@ def generate_weeks(element_config, published):
     weeks = []
     for i, topic in enumerate(element_config["week_topics"]):
         week = Week(
-            published=published,
             number=element_config["first_week_number"] + i,
             topic=topic,
             start_date=element_config["first_week_start_date"] + i * ONE_WEEK,
@@ -171,4 +179,5 @@ def schedule(environment, context, element_config, now):
         weeks=weeks,
         this_week=this_week,
         now=now(),
+        is_something_missing=is_something_missing,
     )

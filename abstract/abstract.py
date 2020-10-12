@@ -350,7 +350,7 @@ def cli():
         def now():
             return _now
 
-        print(f'Running as if it is currently {_now}')
+        print(f"Running as if it is currently {_now}")
 
     abstract(
         pathlib.Path.cwd(), args.output_path, args.published, context=context, now=now

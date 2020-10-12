@@ -9,7 +9,8 @@ homework:
               </a>
 
           requires:
-              artifact: homework.txt
+              artifacts:
+                  - homework.txt
               cell_content_if_missing: Not yet released...
 
         - heading: Solutions
@@ -18,7 +19,8 @@ homework:
               Solution
               </a>
           requires:
-              artifact: solution.txt
+              artifacts: 
+                  - solution.txt
               cell_content_if_missing: Not yet released...
 
         - heading: Due
@@ -35,7 +37,8 @@ lecture_notebooks:
               Lecture ${ publication.metadata.number } &mdash; ${ publication.metadata.topic }
               </a>
           requires:
-              artifact: lecture.ipynb
+              artifacts: 
+                - lecture.ipynb
               cell_content_if_missing: Not yet posted...
 
         - heading: Date

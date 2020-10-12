@@ -1,5 +1,7 @@
 import cerberus
 
+from ._common import is_something_missing
+
 
 SCHEMA = {
     "collection": {"type": "string"},
@@ -14,8 +16,21 @@ SCHEMA = {
                 "requires": {
                     "type": "dict",
                     "schema": {
-                        "artifact": {"type": "string"},
-                        "cell_content_if_missing": {"type": "string"},
+                        "artifacts": {
+                            "type": "list",
+                            "schema": {"type": "string"},
+                            "default": [],
+                        },
+                        "metadata": {
+                            "type": "list",
+                            "schema": {"type": "string"},
+                            "default": [],
+                        },
+                        "cell_content_if_missing": {
+                            "type": "string",
+                            "nullable": True,
+                            "default": None,
+                        },
                     },
                     "default": None,
                     "nullable": True,
@@ -40,4 +55,8 @@ def listing(environment, context, element_config, now):
     publications = [v for (j, v) in publications_and_keys]
 
     template = environment.get_template("listing.html")
-    return template.render(element_config=element_config, publications=publications,)
+    return template.render(
+        element_config=element_config,
+        publications=publications,
+        is_something_missing=is_something_missing,
+    )

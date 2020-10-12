@@ -2,6 +2,7 @@ metadata:
     topic: Python
     date: 2020-10-08
     number: 2
+    recording: http://youtube.com
 
 artifacts:
     discussion.ipynb:

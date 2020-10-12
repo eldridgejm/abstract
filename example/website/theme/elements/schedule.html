@@ -1,12 +1,14 @@
 {% macro display_resource(resource_config, publication) %}
 
+    {% set is_missing = false %}
+    {% set skip = false %}
     {% if resource_config['requires'] is not none %}
-        {% set is_missing = publication.artifacts[resource_config['requires']['artifact']].path is none %}
+        {% set is_missing = is_something_missing(publication, resource_config['requires']) %}
         {% set text_if_missing = resource_config['requires']['text_if_missing'] %}
-        {% set skip = is_missing and (text_if_missing is none) %}
-    {% else %}
-        {% set is_missing = false %}
-        {% set skip = false %}
+
+        {% if is_missing and (text_if_missing is none) %}
+            {% set skip = true %}
+        {% endif %}
     {% endif %}
 
     {% if not skip %}
@@ -53,7 +55,11 @@
 
 {% macro display_assignment(published, week, assignment_config) %}
 
-    {% set week_assignments = week.filter(assignment_config['collection'], assignment_config['metadata_key_for_released']) %}
+    {% set week_assignments = week.filter(
+            published.collections[assignment_config['collection']],
+            assignment_config['metadata_key_for_released']
+        ) 
+    %}
 
     {% for key, assignment in week_assignments.publications.items() | sort(attribute='0') %}
         <div class="list-group-item">
@@ -84,7 +90,11 @@
 
 {% macro display_discussion(published, week, discussion_config) %}
 
-    {% set week_discussions = week.filter(discussion_config['collection'], discussion_config['metadata_key_for_released']) %}
+    {% set week_discussions = week.filter(
+            published.collections[discussion_config['collection']], 
+            discussion_config['metadata_key_for_released']
+        ) 
+    %}
 
     {% for key, discussion in week_discussions.publications.items() | sort(attribute='0') %}
         <div class="list-group-item">
@@ -168,7 +178,11 @@
 
         <div class="row">
             <div class="col-md-7">
-                {% set week_lectures = week.filter(lecture_config['collection'], lecture_config['metadata_key_for_released']) %}
+                {% set week_lectures = week.filter(
+                        published.collections[lecture_config['collection']], 
+                        lecture_config['metadata_key_for_released']
+                    ) 
+                %}
                 {% for key, lecture in week_lectures.publications.items() | sort(attribute='0', reverse=true) %}
                     {{ display_lecture(lecture, lecture_config, loop.last) }}
                 {% endfor %}
