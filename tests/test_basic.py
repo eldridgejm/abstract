@@ -76,7 +76,7 @@ def test_converts_pages_from_markdown_to_html(demo):
     abstract.abstract(demo.path, demo.builddir)
 
     # then
-    assert "<h1>This is a header</h1>" in demo.get_output("one.html")
+    assert "<h1 id=\"this-is-a-header\">This is a header</h1>" in demo.get_output("one.html")
 
 
 def test_pages_have_access_to_published_artifacts(demo):

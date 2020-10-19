@@ -187,7 +187,7 @@ def _convert_markdown_to_html(contents):
         The HTML.
 
     """
-    return markdown.markdown(contents)
+    return markdown.markdown(contents, extensions=['toc'])
 
 
 def _all_pages(input_path, output_path):
