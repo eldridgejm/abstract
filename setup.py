@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="abstract",
-    version="0.1.1",
+    version="0.1.2",
     packages=find_packages(),
     setup_requires=["pytest-runner"],
     install_requires=["jinja2", "pyyaml", "markdown", "publish"],
