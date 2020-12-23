@@ -1,7 +1,7 @@
 {
   description = "Python package for streamlining end-of-quarter grading.";
 
-  inputs.nixpkgs.url = github:NixOS/nixpkgs/20.03;
+  inputs.nixpkgs.url = github:NixOS/nixpkgs/20.09;
 
   inputs.publish.url = github:eldridgejm/publish/0.1.2;
   inputs.publish.inputs.nixpkgs.follows = "nixpkgs";
@@ -24,6 +24,8 @@
 
               # needed for development
               nativeBuildInputs = with python3Packages; [ pytest black flake8 ipython sphinx sphinx_rtd_theme lxml ];
+
+              doCheck = false;
             }
 
           );

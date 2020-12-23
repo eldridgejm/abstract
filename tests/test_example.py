@@ -229,33 +229,31 @@ def test_homework_2_solutions_not_posted_on_15th(publish_on_oct_16):
     assert "published/homeworks/02-tables/solution.txt" in contents
 
 
-# this was failing intermittently on 12/23/2020; should look into this...
+def test_artifact_text_if_missing(publish_on_oct_16):
+    # when
+    path = publish_on_oct_16
+    clean_build(path / "website" / "_build")
+    abstract.abstract(
+        path / "website/",
+        path / "website/_build",
+        path / "website/_build/published",
+        context={"course": {"name": "DSC 10"}},
+        now=lambda: datetime.datetime(2020, 10, 16, 12, 0, 0),
+    )
 
-# def test_artifact_text_if_missing(publish_on_oct_16):
-#     # when
-#     path = publish_on_oct_16
-#     clean_build(path / "website" / "_build")
-#     abstract.abstract(
-#         path / "website/",
-#         path / "website/_build",
-#         path / "website/_build/published",
-#         context={"course": {"name": "DSC 10"}},
-#         now=lambda: datetime.datetime(2020, 10, 16, 12, 0, 0),
-#     )
-# 
-#     # then
-#     out = path / "website" / "_build" / "index.html"
-#     with out.open() as fileobj:
-#         contents = fileobj.read()
-# 
-#     etree = lxml.html.fromstring(contents)
-# 
-#     # select the div containing all homework links
-#     xpath = '//div[ h3[ contains(text(), "Project") ] ]'
-#     [div] = etree.xpath(xpath)
-# 
-#     # get the link to the homework notebook
-#     assert "Not posted yet" in div.text_content()
+    # then
+    out = path / "website" / "_build" / "index.html"
+    with out.open() as fileobj:
+        contents = fileobj.read()
+
+    etree = lxml.html.fromstring(contents)
+
+    # select the div containing all homework links
+    xpath = '//div[ h3[ contains(text(), "Project") ] ]'
+    [div] = etree.xpath(xpath)
+
+    # get the link to the homework notebook
+    assert "Not posted yet" in div.text_content()
 
 
 def test_requires_metadata(publish_on_oct_16):
