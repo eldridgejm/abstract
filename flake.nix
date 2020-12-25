@@ -3,7 +3,7 @@
 
   inputs.nixpkgs.url = github:NixOS/nixpkgs/20.09;
 
-  inputs.publish.url = github:eldridgejm/publish/0.1.2;
+  inputs.publish.url = github:eldridgejm/publish/0.1.3;
   inputs.publish.inputs.nixpkgs.follows = "nixpkgs";
 
   outputs = { self, nixpkgs, publish }: 
