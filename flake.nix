@@ -23,7 +23,7 @@
               propagatedBuildInputs = with python3Packages; [ jinja2 pyyaml markdown publish.outputs.defaultPackage.${system} ];
 
               # needed for development
-              nativeBuildInputs = with python3Packages; [ pytest black flake8 ipython sphinx sphinx_rtd_theme lxml ];
+              nativeBuildInputs = with python3Packages; [ pytest black flake8 ipython sphinx sphinx_rtd_theme lxml publish.outputs.defaultPackage.${system} ];
 
               doCheck = false;
             }

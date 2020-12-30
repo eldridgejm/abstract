@@ -26,6 +26,11 @@ SCHEMA = {
                             "schema": {"type": "string"},
                             "default": [],
                         },
+                        "non_null_metadata": {
+                            "type": "list",
+                            "schema": {"type": "string"},
+                            "default": [],
+                        },
                         "cell_content_if_missing": {
                             "type": "string",
                             "nullable": True,

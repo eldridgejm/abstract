@@ -26,6 +26,11 @@ RESOURCES_SCHEMA = {
                         "schema": {"type": "string"},
                         "default": [],
                     },
+                    "non_null_metadata": {
+                        "type": "list",
+                        "schema": {"type": "string"},
+                        "default": [],
+                    },
                     "text_if_missing": {
                         "type": "string",
                         "nullable": True,
