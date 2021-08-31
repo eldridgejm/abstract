@@ -47,6 +47,11 @@ RESOURCES_SCHEMA = {
 
 SCHEMA = {
     "week_topics": {"type": "list", "schema": {"type": "string"}},
+    "week_order": {
+            "type": "string",
+            "allowed": ["this_week_first", "this_week_last"],
+            "required": False
+        },
     "exams": {
         "type": "dict",
         "keysrules": {"type": "string"},
