@@ -153,7 +153,7 @@ def generate_weeks(element_config, published):
     return weeks
 
 
-def order_weeks(weeks, today):
+def order_this_week_first(weeks, today):
     past_weeks = [w for w in weeks if w.start_date <= today]
     future_weeks = [w for w in weeks if w.start_date > today]
 
@@ -161,6 +161,22 @@ def order_weeks(weeks, today):
     future = sorted(future_weeks, key=lambda x: x.start_date, reverse=False)
 
     return past + future
+
+
+def order_this_week_last(weeks, today):
+    return sorted(weeks, key=lambda x: x.start_date)
+
+
+def order_weeks(element_config, weeks, today):
+    if 'week_order' not in element_config:
+        week_order = 'this_week_first'
+    else:
+        week_order = element_config['week_order']
+
+    return {
+            'this_week_first': order_this_week_first,
+            'this_week_last': order_this_week_last
+    }[week_order](weeks, today)
 
 
 def schedule(environment, context, element_config, now):
@@ -171,7 +187,7 @@ def schedule(environment, context, element_config, now):
         raise RuntimeError(f"Invalid config: {validator.errors}")
 
     weeks = generate_weeks(element_config, context["published"])
-    weeks = order_weeks(weeks, now().date())
+    weeks = order_weeks(element_config, weeks, now().date())
 
     try:
         [this_week] = [w for w in weeks if w.contains(now().date())]
