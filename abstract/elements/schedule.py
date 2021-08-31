@@ -75,6 +75,7 @@ SCHEMA = {
             "resources": RESOURCES_SCHEMA,
             "parts": {
                 "type": "dict",
+                "required": False,
                 "schema": {"key": {"type": "string"}, "text": {"type": "string"}},
             },
         },

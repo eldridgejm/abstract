@@ -1,5 +1,5 @@
 theme:
-    page_title: "DSC 10"
+    page_title: "DSC 80"
 
 
 listings: !include listings.yaml
